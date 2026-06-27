@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNIME Python — Exam Exercises</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#e6edf3;font-size:15px;line-height:1.55}
+.wrap{max-width:760px;margin:0 auto;padding:16px}
+h1{font-size:20px;margin-bottom:4px}
+.sub{color:#8b949e;font-size:13px;margin-bottom:14px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;position:sticky;top:0;background:#0d1117;padding:10px 0;z-index:50;border-bottom:1px solid #21262d}
+.tb{flex:1;min-width:120px;padding:10px 6px;text-align:center;font-weight:700;font-size:12px;cursor:pointer;color:#8b949e;background:#161b22;border:1px solid #30363d;border-radius:8px;text-transform:uppercase;letter-spacing:.4px}
+.tb.active{color:#fff;border-color:#58a6ff;background:#0d1d30}
+.group{display:none}.group.active{display:block}
+.ex{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:15px 16px;margin:14px 0}
+.ex-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.num{background:#1f6feb;color:#fff;font-weight:800;font-size:12px;border-radius:6px;padding:3px 9px}
+.lvl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;padding:2px 8px;border-radius:20px}
+.med{background:#2e2000;color:#e3b341}.hard{background:#3d1a1a;color:#ff7b72}
+.ex-title{font-weight:700;color:#f0f6fc;font-size:15px}
+.task{color:#79c0ff;font-size:14px;margin:8px 0 10px;font-weight:600}
+.given{color:#8b949e;font-size:12px;text-transform:uppercase;letter-spacing:.6px;font-weight:700;margin:8px 0 3px}
+pre{background:#010409;border:1px solid #30363d;border-radius:8px;padding:12px 14px;white-space:pre;overflow-x:auto;font-family:'SF Mono',Consolas,monospace;font-size:12.5px;color:#e6edf3;line-height:1.65;margin:4px 0}
+.reveal-btn{background:#238636;border:none;color:#fff;padding:9px 16px;font-size:13px;font-weight:700;border-radius:7px;cursor:pointer;margin-top:10px}
+.reveal-btn:active{background:#2ea043}
+.sol{display:none;margin-top:10px;border-top:1px dashed #30363d;padding-top:10px}
+.sol.show{display:block}
+.sol-label{color:#56d364;font-size:11px;text-transform:uppercase;letter-spacing:.7px;font-weight:800;margin-bottom:4px}
+.answer{background:#0d2818;border:1px solid #238636;border-radius:8px;padding:10px 13px;margin-top:8px;color:#56d364;font-weight:700;font-size:14px}
+.answer b{color:#7ee787}
+.note{color:#8b949e;font-size:12px;margin-top:6px;font-style:italic}
+.allbtn{background:#21262d;border:1px solid #30363d;color:#8b949e;padding:7px 13px;border-radius:7px;font-size:12px;cursor:pointer;margin-bottom:6px}
+.kw{color:#ff7b72}.fn{color:#d2a8ff}.st{color:#a5d6ff}.nm{color:#79c0ff}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎓 UNIME Python — Exam Exercises</h1>
+  <div class="sub">Prof. Fiumara style · medium → hard · 32 problems with numeric data · tap <b>Show solution</b> to reveal full code + answer</div>
+
+  <div class="tabs">
+    <div class="tb active" onclick="showG('dll',this)">🔗 DLL ×8</div>
+    <div class="tb" onclick="showG('tree',this)">🌲 Tree ×8</div>
+    <div class="tb" onclick="showG('sll',this)">⛓ Linked List ×8</div>
+    <div class="tb" onclick="showG('dict',this)">📦 Dict ×8</div>
+  </div>
+
+  <button class="allbtn" onclick="toggleAll()">👁 Toggle all solutions in this topic</button>
+
+  <div id="g-dll" class="group active"></div>
+  <div id="g-tree" class="group"></div>
+  <div id="g-sll" class="group"></div>
+  <div id="g-dict" class="group"></div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════
+//  EXERCISES  — each: {lvl, title, task, given, sol, answer, note}
+// ════════════════════════════════════════════════
+const EX = {
+// ─────────────── DLL (head/tail sentinels, nodes keyed by value) ───────────────
+dll:[
+{lvl:"med",title:"Sum of a doubly linked list",
+ task:"Write dll_sum(dll) that returns the sum of all node values, then give the result for this DLL.",
+ given:`dll = {
+    'head': {'prev': None, 'next': 7},
+    7:      {'prev': 'head', 'next': 4},
+    4:      {'prev': 7, 'next': 10},
+    10:     {'prev': 4, 'next': 2},
+    2:      {'prev': 10, 'next': 'tail'},
+    'tail': {'prev': 2, 'next': None}
+}`,
+ sol:`def dll_sum(dll):
+    current = dll['head']['next']
+    total = 0
+    while current != 'tail':
+        total += current
+        current = dll[current]['next']
+    return total`,
+ answer:"7 + 4 + 10 + 2 = <b>23</b>"},
+
+{lvl:"med",title:"Maximum value in a DLL",
+ task:"Write dll_max(dll) returning the largest node value. Give the answer for this DLL.",
+ given:`dll = {
+    'head': {'prev': None, 'next': 3},
+    3:      {'prev': 'head', 'next': 15},
+    15:     {'prev': 3, 'next': 9},
+    9:      {'prev': 15, 'next': 21},
+    21:     {'prev': 9, 'next': 6},
+    6:      {'prev': 21, 'next': 'tail'},
+    'tail': {'prev': 6, 'next': None}
+}`,
+ sol:`def dll_max(dll):
+    current = dll['head']['next']
+    max_val = current
+    while current != 'tail':
+        if current > max_val:
+            max_val = current
+        current = dll[current]['next']
+    return max_val`,
+ answer:"max(3,15,9,21,6) = <b>21</b>"},
+
+{lvl:"med",title:"Count even values",
+ task:"Write count_even_dll(dll) that returns how many node values are even. Answer for this DLL.",
+ given:`dll = {
+    'head': {'prev': None, 'next': 8},
+    8:      {'prev': 'head', 'next': 5},
+    5:      {'prev': 8, 'next': 12},
+    12:     {'prev': 5, 'next': 7},
+    7:      {'prev': 12, 'next': 4},
+    4:      {'prev': 7, 'next': 'tail'},
+    'tail': {'prev': 4, 'next': None}
+}`,
+ sol:`def count_even_dll(dll):
+    current = dll['head']['next']
+    count = 0
+    while current != 'tail':
+        if current % 2 == 0:
+            count += 1
+        current = dll[current]['next']
+    return count`,
+ answer:"even values = 8, 12, 4 → <b>3</b>"},
+
+{lvl:"hard",title:"Is the DLL sorted ascending?",
+ task:"Write dll_sorted(dll) returning True if values are in ascending order. Answer for this DLL.",
+ given:`dll = {
+    'head': {'prev': None, 'next': 2},
+    2:      {'prev': 'head', 'next': 5},
+    5:      {'prev': 2, 'next': 9},
+    9:      {'prev': 5, 'next': 6},
+    6:      {'prev': 9, 'next': 'tail'},
+    'tail': {'prev': 6, 'next': None}
+}`,
+ sol:`def dll_sorted(dll):
+    current = dll['head']['next']
+    while dll[current]['next'] != 'tail':
+        nxt = dll[current]['next']
+        if current > nxt:
+            return False
+        current = nxt
+    return True`,
+ answer:"2≤5≤9 but 9 > 6 → <b>False</b>"},
+
+{lvl:"hard",title:"Enqueue then dequeue (trace the result)",
+ task:"enqueue adds at the tail, dequeue removes from the head. Starting from the DLL below, perform enqueue(dll, 50) then dequeue(dll). Write both functions and give the final order of values (head → tail).",
+ given:`dll = {
+    'head': {'prev': None, 'next': 10},
+    10:     {'prev': 'head', 'next': 20},
+    20:     {'prev': 10, 'next': 30},
+    30:     {'prev': 20, 'next': 'tail'},
+    'tail': {'prev': 30, 'next': None}
+}`,
+ sol:`def enqueue(dll, x):
+    prev = dll['tail']['prev']
+    dll[x] = {'prev': prev, 'next': 'tail'}
+    dll[prev]['next'] = x
+    dll['tail']['prev'] = x
+    return dll
+
+def dequeue(dll):
+    first = dll['head']['next']
+    right = dll[first]['next']
+    dll['head']['next'] = right
+    dll[right]['prev'] = 'head'
+    del dll[first]
+    return dll`,
+ answer:"After enqueue(50): 10,20,30,50. After dequeue (removes 10): <b>20 → 30 → 50</b>"},
+
+{lvl:"hard",title:"Remove the last two nodes",
+ task:"Write remove_last2(dll) that deletes the final two nodes. Give the resulting order (head → tail).",
+ given:`dll = {
+    'head': {'prev': None, 'next': 11},
+    11:     {'prev': 'head', 'next': 22},
+    22:     {'prev': 11, 'next': 33},
+    33:     {'prev': 22, 'next': 44},
+    44:     {'prev': 33, 'next': 'tail'},
+    'tail': {'prev': 44, 'next': None}
+}`,
+ sol:`def remove_last2(dll):
+    n1 = dll['tail']['prev']      # 44
+    n2 = dll[n1]['prev']          # 33
+    left = dll[n2]['prev']        # 22
+    dll[left]['next'] = 'tail'
+    dll['tail']['prev'] = left
+    del dll[n1]
+    del dll[n2]
+    return dll`,
+ answer:"Removes 44 and 33 → <b>11 → 22</b>"},
+
+{lvl:"hard",title:"Swap first and last node",
+ task:"Write swap_ends(dll) that swaps the first and last real nodes. Give the resulting order (head → tail).",
+ given:`dll = {
+    'head': {'prev': None, 'next': 1},
+    1:      {'prev': 'head', 'next': 2},
+    2:      {'prev': 1, 'next': 3},
+    3:      {'prev': 2, 'next': 4},
+    4:      {'prev': 3, 'next': 'tail'},
+    'tail': {'prev': 4, 'next': None}
+}`,
+ sol:`def swap_ends(dll):
+    first = dll['head']['next']   # 1
+    last = dll['tail']['prev']    # 4
+    if first == last:
+        return dll
+    fn = dll[first]['next']       # 2
+    lp = dll[last]['prev']        # 3
+    dll['head']['next'] = last
+    dll[last]['prev'] = 'head'
+    dll[last]['next'] = fn
+    dll[fn]['prev'] = last
+    dll[lp]['next'] = first
+    dll[first]['prev'] = lp
+    dll[first]['next'] = 'tail'
+    dll['tail']['prev'] = first
+    return dll`,
+ answer:"Swap 1 and 4 → <b>4 → 2 → 3 → 1</b>"},
+
+{lvl:"med",title:"Count values greater than n",
+ task:"Write count_greater_dll(dll, n) returning how many values exceed n. Answer for n = 10.",
+ given:`dll = {
+    'head': {'prev': None, 'next': 14},
+    14:     {'prev': 'head', 'next': 9},
+    9:      {'prev': 14, 'next': 25},
+    25:     {'prev': 9, 'next': 3},
+    3:      {'prev': 25, 'next': 11},
+    11:     {'prev': 3, 'next': 'tail'},
+    'tail': {'prev': 11, 'next': None}
+}
+n = 10`,
+ sol:`def count_greater_dll(dll, n):
+    current = dll['head']['next']
+    count = 0
+    while current != 'tail':
+        if current > n:
+            count += 1
+        current = dll[current]['next']
+    return count`,
+ answer:"> 10 → 14, 25, 11 → <b>3</b>"},
+],
+
+// ─────────────── BINARY TREE (BFS, nodes keyed by value, L/R children) ───────────────
+tree:[
+{lvl:"med",title:"Sum of all node values",
+ task:"Write btc(tree, root) using BFS that sums all numeric node values. Answer for this tree.",
+ given:`tree = {
+    'root': {'L': 8, 'R': 3},
+    8:      {'L': 5, 'R': 9},
+    3:      {'L': None, 'R': 4},
+    5:      {'L': None, 'R': None},
+    9:      {'L': None, 'R': None},
+    4:      {'L': None, 'R': None}
+}
+# 'root' holds value 0 here (only children matter for the shape)`,
+ sol:`def btc(tree, root):
+    queue = [root]
+    total = 0
+    while queue:
+        current = queue.pop(0)
+        lc = tree[current]['L']
+        rc = tree[current]['R']
+        if lc is not None:
+            queue.append(lc)
+        if rc is not None:
+            queue.append(rc)
+        if isinstance(current, (int, float)):
+            total += current
+    return total`,
+ answer:"8 + 3 + 5 + 9 + 4 = <b>29</b>  ('root' is not numeric, skipped)"},
+
+{lvl:"med",title:"Count the leaves",
+ task:"Write count_leaves(tree, root) returning the number of leaf nodes (no L and no R child). Answer for this tree.",
+ given:`tree = {
+    'root': {'L': 10, 'R': 20},
+    10:     {'L': 6, 'R': 7},
+    20:     {'L': None, 'R': 15},
+    6:      {'L': None, 'R': None},
+    7:      {'L': None, 'R': None},
+    15:     {'L': None, 'R': None}
+}`,
+ sol:`def count_leaves(tree, root):
+    queue = [root]
+    count = 0
+    while queue:
+        current = queue.pop(0)
+        lc = tree[current]['L']
+        rc = tree[current]['R']
+        if lc is not None:
+            queue.append(lc)
+        if rc is not None:
+            queue.append(rc)
+        if lc is None and rc is None:
+            count += 1
+    return count`,
+ answer:"leaves = 6, 7, 15 → <b>3</b>"},
+
+{lvl:"hard",title:"Values between lo and hi",
+ task:"Write between(tree, root, lo, hi) returning a list of numeric values v with lo ≤ v ≤ hi. Answer for lo = 5, hi = 15.",
+ given:`tree = {
+    'root': {'L': 12, 'R': 3},
+    12:     {'L': 18, 'R': 7},
+    3:      {'L': None, 'R': 20},
+    18:     {'L': None, 'R': None},
+    7:      {'L': None, 'R': None},
+    20:     {'L': None, 'R': None}
+}
+lo, hi = 5, 15`,
+ sol:`def between(tree, root, lo, hi):
+    queue = [root]
+    result = []
+    while queue:
+        current = queue.pop(0)
+        lc = tree[current]['L']
+        rc = tree[current]['R']
+        if lc is not None:
+            queue.append(lc)
+        if rc is not None:
+            queue.append(rc)
+        if isinstance(current, (int, float)):
+            if lo <= current <= hi:
+                result.append(current)
+    return result`,
+ answer:"in [5,15]: 12, 7 → <b>[12, 7]</b>  (order = BFS)"},
+
+{lvl:"med",title:"Maximum node value",
+ task:"Write tree_max(tree, root) returning the largest numeric value via BFS. Answer for this tree.",
+ given:`tree = {
+    'root': {'L': 14, 'R': 9},
+    14:     {'L': 30, 'R': 2},
+    9:      {'L': None, 'R': 25},
+    30:     {'L': None, 'R': None},
+    2:      {'L': None, 'R': None},
+    25:     {'L': None, 'R': None}
+}`,
+ sol:`def tree_max(tree, root):
+    queue = [root]
+    max_val = None
+    while queue:
+        current = queue.pop(0)
+        lc = tree[current]['L']
+        rc = tree[current]['R']
+        if lc is not None:
+            queue.append(lc)
+        if rc is not None:
+            queue.append(rc)
+        if isinstance(current, (int, float)):
+            if max_val is None or current > max_val:
+                max_val = current
+    return max_val`,
+ answer:"max(14,9,30,2,25) = <b>30</b>"},
+
+{lvl:"med",title:"Count all nodes",
+ task:"Write count_nodes(tree, root) counting every node reachable (including non-numeric root). Answer for this tree.",
+ given:`tree = {
+    'root': {'L': 1, 'R': 2},
+    1:      {'L': 3, 'R': 4},
+    2:      {'L': 5, 'R': None},
+    3:      {'L': None, 'R': None},
+    4:      {'L': None, 'R': None},
+    5:      {'L': None, 'R': None}
+}`,
+ sol:`def count_nodes(tree, root):
+    queue = [root]
+    count = 0
+    while queue:
+        current = queue.pop(0)
+        count += 1
+        lc = tree[current]['L']
+        rc = tree[current]['R']
+        if lc is not None:
+            queue.append(lc)
+        if rc is not None:
+            queue.append(rc)
+    return count`,
+ answer:"root,1,2,3,4,5 → <b>6</b>"},
+
+{lvl:"hard",title:"Count even node values",
+ task:"Write count_even_tree(tree, root) returning how many numeric values are even. Answer for this tree.",
+ given:`tree = {
+    'root': {'L': 4, 'R': 7},
+    4:      {'L': 10, 'R': 5},
+    7:      {'L': None, 'R': 8},
+    10:     {'L': None, 'R': None},
+    5:      {'L': None, 'R': None},
+    8:      {'L': None, 'R': None}
+}`,
+ sol:`def count_even_tree(tree, root):
+    queue = [root]
+    count = 0
+    while queue:
+        current = queue.pop(0)
+        lc = tree[current]['L']
+        rc = tree[current]['R']
+        if lc is not None:
+            queue.append(lc)
+        if rc is not None:
+            queue.append(rc)
+        if isinstance(current, (int, float)) and current % 2 == 0:
+            count += 1
+    return count`,
+ answer:"even: 4, 10, 8 → <b>3</b>"},
+
+{lvl:"hard",title:"Does the tree contain a value?",
+ task:"Write contains(tree, root, target) returning True if target is a node value. Answer for target = 13.",
+ given:`tree = {
+    'root': {'L': 6, 'R': 13},
+    6:      {'L': 2, 'R': None},
+    13:     {'L': 9, 'R': 21},
+    2:      {'L': None, 'R': None},
+    9:      {'L': None, 'R': None},
+    21:     {'L': None, 'R': None}
+}
+target = 13`,
+ sol:`def contains(tree, root, target):
+    queue = [root]
+    while queue:
+        current = queue.pop(0)
+        if current == target:
+            return True
+        lc = tree[current]['L']
+        rc = tree[current]['R']
+        if lc is not None:
+            queue.append(lc)
+        if rc is not None:
+            queue.append(rc)
+    return False`,
+ answer:"13 is the right child of root → <b>True</b>"},
+
+{lvl:"hard",title:"Sum of leaf values only",
+ task:"Write sum_leaves(tree, root) that adds up the values of leaf nodes only. Answer for this tree.",
+ given:`tree = {
+    'root': {'L': 5, 'R': 8},
+    5:      {'L': 3, 'R': 6},
+    8:      {'L': None, 'R': 10},
+    3:      {'L': None, 'R': None},
+    6:      {'L': None, 'R': None},
+    10:     {'L': None, 'R': None}
+}`,
+ sol:`def sum_leaves(tree, root):
+    queue = [root]
+    total = 0
+    while queue:
+        current = queue.pop(0)
+        lc = tree[current]['L']
+        rc = tree[current]['R']
+        if lc is not None:
+            queue.append(lc)
+        if rc is not None:
+            queue.append(rc)
+        if lc is None and rc is None:
+            if isinstance(current, (int, float)):
+                total += current
+    return total`,
+ answer:"leaves = 3, 6, 10 → 3 + 6 + 10 = <b>19</b>"},
+],
+
+// ─────────────── SINGLY LINKED LIST (None terminator) ───────────────
+sll:[
+{lvl:"med",title:"Sum of a singly linked list",
+ task:"Write sum_sll(llist) that adds all node values. The list ends at None. Answer for this list.",
+ given:`llist = {
+    'head': 6,
+    6: 11,
+    11: 4,
+    4: 9,
+    9: None
+}`,
+ sol:`def sum_sll(llist):
+    current = llist['head']
+    total = 0
+    while current is not None:
+        total += current
+        current = llist[current]
+    return total`,
+ answer:"6 + 11 + 4 + 9 = <b>30</b>"},
+
+{lvl:"med",title:"Length of the list",
+ task:"Write count_sll(llist) returning the number of nodes (not counting 'head'). Answer for this list.",
+ given:`llist = {
+    'head': 3,
+    3: 8,
+    8: 1,
+    1: 7,
+    7: 5,
+    5: None
+}`,
+ sol:`def count_sll(llist):
+    current = llist['head']
+    count = 0
+    while current is not None:
+        count += 1
+        current = llist[current]
+    return count`,
+ answer:"nodes = 3,8,1,7,5 → <b>5</b>"},
+
+{lvl:"med",title:"Maximum value",
+ task:"Write max_sll(llist) returning the largest node value. Answer for this list.",
+ given:`llist = {
+    'head': 12,
+    12: 7,
+    7: 19,
+    19: 4,
+    4: 15,
+    15: None
+}`,
+ sol:`def max_sll(llist):
+    current = llist['head']
+    max_val = current
+    while current is not None:
+        if current > max_val:
+            max_val = current
+        current = llist[current]
+    return max_val`,
+ answer:"max(12,7,19,4,15) = <b>19</b>"},
+
+{lvl:"hard",title:"Does it contain a value?",
+ task:"Write contains_sll(llist, target) returning True/False. Answer for target = 14.",
+ given:`llist = {
+    'head': 2,
+    2: 14,
+    14: 6,
+    6: 8,
+    8: None
+}
+target = 14`,
+ sol:`def contains_sll(llist, target):
+    current = llist['head']
+    while current is not None:
+        if current == target:
+            return True
+        current = llist[current]
+    return False`,
+ answer:"14 is the 2nd node → <b>True</b>"},
+
+{lvl:"hard",title:"Add a node at the front (trace)",
+ task:"Write add_front(llist, node) that inserts node before the head. Apply add_front(llist, 99) and give the new order.",
+ given:`llist = {
+    'head': 5,
+    5: 8,
+    8: 3,
+    3: None
+}
+# call: add_front(llist, 99)`,
+ sol:`def add_front(llist, node):
+    llist[node] = llist['head']
+    llist['head'] = node
+    return llist`,
+ answer:"99 now points to old head 5 → <b>99 → 5 → 8 → 3</b>"},
+
+{lvl:"hard",title:"Remove the first node (trace)",
+ task:"Write remove_first(llist) that deletes the first node after head. Apply it and give the new order.",
+ given:`llist = {
+    'head': 10,
+    10: 20,
+    20: 30,
+    30: None
+}`,
+ sol:`def remove_first(llist):
+    first = llist['head']
+    llist['head'] = llist[first]
+    del llist[first]
+    return llist`,
+ answer:"head moves to 20, node 10 deleted → <b>20 → 30</b>"},
+
+{lvl:"med",title:"Count even values",
+ task:"Write count_even_sll(llist) returning how many node values are even. Answer for this list.",
+ given:`llist = {
+    'head': 4,
+    4: 7,
+    7: 10,
+    10: 3,
+    3: 6,
+    6: None
+}`,
+ sol:`def count_even_sll(llist):
+    current = llist['head']
+    count = 0
+    while current is not None:
+        if current % 2 == 0:
+            count += 1
+        current = llist[current]
+    return count`,
+ answer:"even = 4, 10, 6 → <b>3</b>"},
+
+{lvl:"hard",title:"Average of the list",
+ task:"Write average_sll(llist) returning the mean of all values. Answer for this list.",
+ given:`llist = {
+    'head': 8,
+    8: 12,
+    12: 4,
+    4: 16,
+    16: None
+}`,
+ sol:`def average_sll(llist):
+    current = llist['head']
+    total = 0
+    count = 0
+    while current is not None:
+        total += current
+        count += 1
+        current = llist[current]
+    return total / count`,
+ answer:"(8+12+4+16)/4 = 40/4 = <b>10.0</b>"},
+],
+
+// ─────────────── DICTIONARY ───────────────
+dict:[
+{lvl:"med",title:"Letter frequency",
+ task:"Write count_letters(text) returning a dict mapping each letter to its count (lowercased). Give the dict for the word below.",
+ given:`text = "banana"`,
+ sol:`def count_letters(text):
+    d = {}
+    text = text.lower()
+    for x in text:
+        if x in d:
+            d[x] += 1
+        else:
+            d[x] = 1
+    return d`,
+ answer:"<b>{'b': 1, 'a': 3, 'n': 2}</b>"},
+
+{lvl:"med",title:"Word lengths",
+ task:"Write word_lengths(text) mapping each word to its length. Give the dict for the sentence below.",
+ given:`text = "the quick brown fox"`,
+ sol:`def word_lengths(text):
+    d = {}
+    words = text.split()
+    for w in words:
+        d[w] = len(w)
+    return d`,
+ answer:"<b>{'the': 3, 'quick': 5, 'brown': 5, 'fox': 3}</b>"},
+
+{lvl:"hard",title:"Query grades by subject and score",
+ task:"Each student maps to (subject, score). Write query_grades(grades, subject, min_score) returning two lists: students of that subject, and students scoring above min_score. Answer for subject='Math', min_score=25.",
+ given:`grades = {
+    'Anna':  ('Math', 28),
+    'Bob':   ('Physics', 30),
+    'Carla': ('Math', 22),
+    'Dino':  ('Math', 26),
+    'Elena': ('Physics', 19)
+}
+subject, min_score = 'Math', 25`,
+ sol:`def query_grades(grades, subject, min_score):
+    by_subject = []
+    high_scorers = []
+    for name, info in grades.items():
+        subj = info[0]
+        score = info[1]
+        if subj == subject:
+            by_subject += [name]
+        if score > min_score:
+            high_scorers += [name]
+    return by_subject, high_scorers`,
+ answer:"by_subject(Math) = ['Anna','Carla','Dino'] · high_scorers(>25) = ['Anna','Bob','Dino'] → <b>(['Anna','Carla','Dino'], ['Anna','Bob','Dino'])</b>"},
+
+{lvl:"hard",title:"Query a music catalog",
+ task:"Each song maps to (artist, duration). Write query_catalog(catalog, artist, min_dur) returning (songs by that artist, songs longer than min_dur). Answer for artist='Mina', min_dur=180.",
+ given:`catalog = {
+    'Song1': ('Mina', 200),
+    'Song2': ('Celentano', 150),
+    'Song3': ('Mina', 175),
+    'Song4': ('Mina', 240),
+    'Song5': ('Battisti', 190)
+}
+artist, min_dur = 'Mina', 180`,
+ sol:`def query_catalog(catalog, artist, min_dur):
+    by_artist = []
+    long_songs = []
+    for title, info in catalog.items():
+        art = info[0]
+        dur = info[1]
+        if art == artist:
+            by_artist += [title]
+        if dur > min_dur:
+            long_songs += [title]
+    return by_artist, long_songs`,
+ answer:"by_artist(Mina)=['Song1','Song3','Song4'] · long(>180)=['Song1','Song4','Song5'] → <b>(['Song1','Song3','Song4'], ['Song1','Song4','Song5'])</b>"},
+
+{lvl:"hard",title:"Invert and group a dictionary",
+ task:"Write invert_and_group(d) that builds a new dict value → list of keys having that value. Give the result for the dict below.",
+ given:`d = {
+    'a': 1,
+    'b': 2,
+    'c': 1,
+    'd': 3,
+    'e': 2
+}`,
+ sol:`def invert_and_group(d):
+    inverse = {}
+    for k in d:
+        val = d[k]
+        if val not in inverse:
+            inverse[val] = [k]
+        else:
+            inverse[val].append(k)
+    return inverse`,
+ answer:"<b>{1: ['a','c'], 2: ['b','e'], 3: ['d']}</b>"},
+
+{lvl:"med",title:"Filter a phonebook by type",
+ task:"Each contact maps to (number, type). Write by_type(pb, contact_type) returning names matching the type. Answer for contact_type='work'.",
+ given:`pb = {
+    'Marco': (3331111, 'home'),
+    'Lucia': (3332222, 'work'),
+    'Gino':  (3333333, 'work'),
+    'Sara':  (3334444, 'home')
+}
+contact_type = 'work'`,
+ sol:`def by_type(pb, contact_type):
+    result = []
+    for name in pb:
+        if pb[name][1] == contact_type:
+            result += [name]
+    return result`,
+ answer:"work contacts → <b>['Lucia', 'Gino']</b>"},
+
+{lvl:"hard",title:"Key with the maximum value",
+ task:"Write max_key(d) returning the key whose value is largest. Answer for the dict below.",
+ given:`d = {
+    'apple': 12,
+    'pear': 7,
+    'kiwi': 19,
+    'plum': 15
+}`,
+ sol:`def max_key(d):
+    best_key = None
+    best_val = None
+    for k in d:
+        if best_val is None or d[k] > best_val:
+            best_val = d[k]
+            best_key = k
+    return best_key`,
+ answer:"largest value 19 → <b>'kiwi'</b>"},
+
+{lvl:"hard",title:"Build a frequency dict from a list",
+ task:"Write frequency(lst) returning a dict element → how many times it appears. Give the result for the list below.",
+ given:`lst = [4, 7, 4, 4, 9, 7, 2]`,
+ sol:`def frequency(lst):
+    d = {}
+    for x in lst:
+        if x in d:
+            d[x] += 1
+        else:
+            d[x] = 1
+    return d`,
+ answer:"<b>{4: 3, 7: 2, 9: 1, 2: 1}</b>"},
+],
+};
+
+// ════════════════════════════════════════════════
+//  RENDER
+// ════════════════════════════════════════════════
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function buildGroup(topic){
+  const list = EX[topic];
+  let html = '';
+  list.forEach((e, idx)=>{
+    const lvlClass = e.lvl === 'hard' ? 'hard' : 'med';
+    const lvlText = e.lvl === 'hard' ? 'Hard' : 'Medium';
+    html += `<div class="ex">
+      <div class="ex-head">
+        <span class="num">${idx+1}</span>
+        <span class="lvl ${lvlClass}">${lvlText}</span>
+      </div>
+      <div class="ex-title">${e.title}</div>
+      <div class="task">${e.task}</div>
+      <div class="given">Given</div>
+      <pre>${esc(e.given)}</pre>
+      <button class="reveal-btn" onclick="toggleSol(this)">✅ Show solution</button>
+      <div class="sol">
+        <div class="sol-label">Full solution</div>
+        <pre>${esc(e.sol)}</pre>
+        <div class="answer">Answer: ${e.answer}</div>
+        ${e.note ? `<div class="note">${e.note}</div>` : ''}
+      </div>
+    </div>`;
+  });
+  document.getElementById('g-'+topic).innerHTML = html;
+}
+
+['dll','tree','sll','dict'].forEach(buildGroup);
+
+function toggleSol(btn){
+  const sol = btn.nextElementSibling;
+  sol.classList.toggle('show');
+  btn.textContent = sol.classList.contains('show') ? '🙈 Hide solution' : '✅ Show solution';
+}
+
+function showG(topic, el){
+  document.querySelectorAll('.group').forEach(g=>g.classList.remove('active'));
+  document.querySelectorAll('.tb').forEach(t=>t.classList.remove('active'));
+  document.getElementById('g-'+topic).classList.add('active');
+  el.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function toggleAll(){
+  const active = document.querySelector('.group.active');
+  const sols = active.querySelectorAll('.sol');
+  const anyHidden = [...sols].some(s=>!s.classList.contains('show'));
+  sols.forEach(s=>{
+    if(anyHidden) s.classList.add('show'); else s.classList.remove('show');
+    const btn = s.previousElementSibling;
+    btn.textContent = anyHidden ? '🙈 Hide solution' : '✅ Show solution';
+  });
+}
+</script>
+</body>
+</html>

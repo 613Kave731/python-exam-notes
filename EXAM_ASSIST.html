@@ -1,0 +1,1836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Python Exam Assist</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#e6edf3;font-size:15px;line-height:1.55}
+.tabs{display:flex;position:sticky;top:0;z-index:99;background:#161b22;border-bottom:2px solid #30363d}
+.tab{flex:1;padding:13px 4px;text-align:center;font-weight:700;font-size:11px;cursor:pointer;color:#8b949e;border-bottom:3px solid transparent;text-transform:uppercase;letter-spacing:.4px}
+.tab.active{color:#fff;border-bottom-color:#58a6ff}
+.section{display:none;padding:14px;max-width:680px;margin:0 auto}
+.section.active{display:block}
+.card{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:13px 15px;margin-bottom:12px}
+.card h2{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#8b949e;margin-bottom:9px}
+.tip{background:#0d1117;border-left:3px solid #1f6feb;border-radius:0 7px 7px 0;padding:7px 11px;margin:5px 0}
+.tip .q{color:#8b949e;font-size:12px}
+.tip .a{color:#56d364;font-weight:700;font-size:13px}
+.chip{display:inline-block;padding:2px 8px;border-radius:20px;font-size:12px;font-weight:700;margin:2px}
+.red{background:#3d1a1a;color:#ff7b72}.green{background:#0d2818;color:#56d364}
+.blue{background:#0d1d30;color:#58a6ff}.yellow{background:#2e2000;color:#e3b341}
+.q-node{background:#0d1d30;border:2px solid #1f6feb;border-radius:10px;padding:14px 15px;margin:8px 0}
+.q-node .qlabel{color:#58a6ff;font-size:11px;text-transform:uppercase;letter-spacing:.8px;font-weight:700}
+.q-node .qtext{color:#f0f6fc;font-size:16px;font-weight:700;margin-top:4px}
+.branch{display:flex;gap:8px;margin-top:11px}
+.yes-btn{flex:1;background:#1a4731;color:#56d364;border:1px solid #238636;border-radius:7px;padding:10px;font-weight:700;font-size:14px;cursor:pointer;text-align:center}
+.no-btn{flex:1;background:#3d1a1a;color:#ff7b72;border:1px solid #da3633;border-radius:7px;padding:10px;font-weight:700;font-size:14px;cursor:pointer;text-align:center}
+.yes-btn:active{background:#238636}.no-btn:active{background:#da3633;color:#fff}
+.ans-node{background:#0d2818;border:2px solid #238636;border-radius:10px;padding:14px 15px;margin:8px 0}
+.fn-sig{color:#56d364;font-size:17px;font-weight:900;margin-bottom:10px}
+.w-row{background:#0d1117;border-radius:7px;padding:9px 12px;margin:5px 0}
+.w-label{color:#8b949e;font-size:11px;text-transform:uppercase;letter-spacing:.7px;font-weight:700}
+.w-text{color:#e3b341;font-size:14px;font-weight:600;margin-top:3px;line-height:1.5}
+.code-block{background:#010409;border:1px solid #30363d;border-radius:7px;padding:12px 14px;margin:8px 0;white-space:pre;font-family:'SF Mono',Consolas,monospace;font-size:12.5px;color:#e6edf3;overflow-x:auto;line-height:1.7}
+.back-btn{display:inline-block;background:#21262d;border:1px solid #30363d;border-radius:7px;color:#8b949e;padding:7px 14px;font-size:13px;cursor:pointer;margin-bottom:9px}
+.restart-btn{background:#1f6feb;border:none;border-radius:8px;color:#fff;padding:11px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-top:10px}
+.restart-btn:active{background:#388bfd}
+.prog-bar{height:4px;background:#21262d;border-radius:2px;margin-bottom:13px}
+.prog-fill{height:4px;background:#1f6feb;border-radius:2px;transition:width .25s}
+.fn-row{border-bottom:1px solid #21262d;padding:8px 0}
+.fn-row:last-child{border-bottom:none}
+.fn-name{color:#58a6ff;font-weight:700;font-size:13px}
+.fn-hint{color:#8b949e;font-size:12px;margin-top:2px}
+pre,code{font-family:'SF Mono',Consolas,monospace;font-size:12px}
+.alert{background:#2e2000;border:1px solid #e3b341;border-radius:8px;padding:10px 13px;margin-bottom:12px;color:#e3b341;font-size:13px}
+/* MAP TAB */
+#tab-map{padding:0;max-width:100%}
+.map-wrap{overflow-x:auto;overflow-y:auto;background:#010409;min-height:calc(100vh - 50px)}
+.map-wrap svg{display:block;margin:0 auto}
+</style>
+</head>
+<body>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('flow',this)">🎯 Flowchart</div>
+  <div class="tab" onclick="showTab('mcq',this)">📝 MCQ</div>
+  <div class="tab" onclick="showTab('ref',this)">⚡ All Fns</div>
+  <div class="tab" onclick="showTab('map',this)">🗺️ Map</div>
+</div>
+
+<!-- ══════════ FLOWCHART TAB ══════════ -->
+<div id="tab-flow" class="section active">
+  <div class="prog-bar"><div class="prog-fill" id="prog" style="width:4%"></div></div>
+  <div id="flow-out"></div>
+</div>
+
+<!-- ══════════ MCQ TAB ══════════ -->
+<div id="tab-mcq" class="section">
+  <div class="card">
+    <h2>🔤 Strings — tricky output</h2>
+    <div class="tip"><div class="q">name="Alice" → print(f"Hello, {name}!")</div><div class="a">Hello, Alice!</div></div>
+    <div class="tip"><div class="q">"hello"[1:4]</div><div class="a">"ell" (index 1,2,3 — NOT 4)</div></div>
+    <div class="tip"><div class="q">"hi"*3</div><div class="a">HiHiHi</div></div>
+    <div class="tip"><div class="q">"hello"[::-1]</div><div class="a">"olleh"</div></div>
+    <div class="tip"><div class="q">len("hello")</div><div class="a">5</div></div>
+    <div class="tip"><div class="q">"Hello".lower() / .upper() / .strip()</div><div class="a">hello / HELLO / remove spaces</div></div>
+  </div>
+  <div class="card">
+    <h2>📋 Lists — traps</h2>
+    <div class="tip"><div class="q">lst.sort() returns ___</div><div class="a">None! (modifies in place)</div></div>
+    <div class="tip"><div class="q">sorted(lst) returns ___</div><div class="a">NEW sorted list</div></div>
+    <div class="tip"><div class="q">lst.pop() / lst.pop(0)</div><div class="a">remove LAST / remove FIRST</div></div>
+    <div class="tip"><div class="q">b=a; b.append(1) → does a change?</div><div class="a">YES — lists are mutable references</div></div>
+    <div class="tip"><div class="q">lst[::2] / lst[1::2]</div><div class="a">even-index items / odd-index items</div></div>
+  </div>
+  <div class="card">
+    <h2>📦 Dicts</h2>
+    <div class="tip"><div class="q">d.get(k, default) vs d[k]</div><div class="a">safe (returns default) / crashes if missing</div></div>
+    <div class="tip"><div class="q">d["x"] += 1 on empty dict</div><div class="a">KeyError! Use d.get("x",0)+1</div></div>
+    <div class="tip"><div class="q">k in d</div><div class="a">checks KEYS only</div></div>
+    <div class="tip"><div class="q">d.items() / d.keys() / d.values()</div><div class="a">(k,v) pairs / keys / values</div></div>
+  </div>
+  <div class="card">
+    <h2>🔬 Types &amp; Truthiness</h2>
+    <div class="tip"><div class="q">type(1)/type(1.0)/type("a")/type([])/type(())/type({})</div><div class="a">int / float / str / list / tuple / dict</div></div>
+    <div class="tip"><div class="q">FALSY values</div><div class="a">0, "", [], {}, (), None, False</div></div>
+    <div class="tip"><div class="q">== vs is</div><div class="a">== value equality / is identity (same object)</div></div>
+    <div class="tip"><div class="q">5//2 / 5%2 / 2**3</div><div class="a">2 / 1 / 8</div></div>
+    <div class="tip"><div class="q">range(5) / range(1,4) / range(0,10,2)</div><div class="a">0-4 / 1-3 / 0,2,4,6,8</div></div>
+  </div>
+  <div class="card">
+    <h2>⚠️ Exam Traps</h2>
+    <div class="tip"><div class="q">for i in range(5): → last i =</div><div class="a">4 (not 5!)</div></div>
+    <div class="tip"><div class="q">def f(x): x=99 → does caller's x change?</div><div class="a">NO (int is immutable)</div></div>
+    <div class="tip"><div class="q">def f(lst): lst.append(1) → does caller's list change?</div><div class="a">YES (list is mutable)</div></div>
+    <div class="tip"><div class="q">print("Hello"+"World")</div><div class="a">HelloWorld (no space!)</div></div>
+    <div class="tip"><div class="q">function with no return →</div><div class="a">returns None</div></div>
+  </div>
+</div>
+
+<!-- ══════════ ALL FNS TAB ══════════ -->
+<div id="tab-ref" class="section">
+  <div class="card">
+    <h2>📋 Flat List</h2>
+    <div class="fn-row"><div class="fn-name">onlyeven(xlist)</div><div class="fn-hint">for v → if v%2==0: append → return result</div></div>
+    <div class="fn-row"><div class="fn-name">onlyodd(xlist)</div><div class="fn-hint">same but v%2!=0</div></div>
+    <div class="fn-row"><div class="fn-name">greater_than(lst,n)</div><div class="fn-hint">if v &gt; n: append</div></div>
+    <div class="fn-row"><div class="fn-name">smaller_than(lst,n)</div><div class="fn-hint">if v &lt; n: append</div></div>
+    <div class="fn-row"><div class="fn-name">unique_list(lst)</div><div class="fn-hint">inner loop check: if not in result → append</div></div>
+    <div class="fn-row"><div class="fn-name">unique_even(lst)</div><div class="fn-hint">if v%2==0 AND not in result → append</div></div>
+    <div class="fn-row"><div class="fn-name">separate_even_odd(lst)</div><div class="fn-hint">even=[], odd=[] → return [even, odd]</div></div>
+    <div class="fn-row"><div class="fn-name">count_even(lst)</div><div class="fn-hint">count=0 → if v%2==0: count+=1</div></div>
+    <div class="fn-row"><div class="fn-name">count_odd(lst)</div><div class="fn-hint">same but !=0</div></div>
+    <div class="fn-row"><div class="fn-name">count_greater(lst,n)</div><div class="fn-hint">if v &gt; n: count+=1</div></div>
+    <div class="fn-row"><div class="fn-name">count_value(lst,target)</div><div class="fn-hint">if item==target: count+=1</div></div>
+    <div class="fn-row"><div class="fn-name">percent_even(lst)</div><div class="fn-hint">count/len(lst)*100</div></div>
+    <div class="fn-row"><div class="fn-name">average(lst) / my_average</div><div class="fn-hint">total/len(lst)</div></div>
+    <div class="fn-row"><div class="fn-name">my_min(lst)</div><div class="fn-hint">best=lst[0] → if v&lt;best: best=v</div></div>
+    <div class="fn-row"><div class="fn-name">my_max(lst)</div><div class="fn-hint">best=lst[0] → if v&gt;best: best=v</div></div>
+    <div class="fn-row"><div class="fn-name">my_sum(xlist)</div><div class="fn-hint">total=0 → total+=v → return total</div></div>
+    <div class="fn-row"><div class="fn-name">scalar_product(v1,v2)</div><div class="fn-hint">for i in range(len) → result.insert(i, v1[i]*v2[i])</div></div>
+    <div class="fn-row"><div class="fn-name">insertionSort(a)</div><div class="fn-hint">key=a[j]; while a[i-1]&gt;key: shift right; place key</div></div>
+    <div class="fn-row"><div class="fn-name">insertionSort_desc(a)</div><div class="fn-hint">same but a[i-1] &lt; key</div></div>
+  </div>
+  <div class="card">
+    <h2>🗂 Nested List (xlist)</h2>
+    <div class="fn-row"><div class="fn-name">even_ds(xlist)</div><div class="fn-hint">per sublist → inner=[] → filter even → append inner</div></div>
+    <div class="fn-row"><div class="fn-name">onlyodd_ds(xlist)</div><div class="fn-hint">same but odd</div></div>
+    <div class="fn-row"><div class="fn-name">unique_ds(xlist)</div><div class="fn-hint">per sublist → dedup inner loop</div></div>
+    <div class="fn-row"><div class="fn-name">flatten_even</div><div class="fn-hint">double loop → if%2==0: append flat</div></div>
+    <div class="fn-row"><div class="fn-name">flatten_unique</div><div class="fn-hint">double loop → if not in result: append</div></div>
+    <div class="fn-row"><div class="fn-name">flatten_unique_even</div><div class="fn-hint">double loop → if even AND not in result</div></div>
+    <div class="fn-row"><div class="fn-name">count_even_ds(xlist)</div><div class="fn-hint">per sublist → count evens → result.append(count)</div></div>
+    <div class="fn-row"><div class="fn-name">countnegativexlist</div><div class="fn-hint">same but v&lt;0</div></div>
+    <div class="fn-row"><div class="fn-name">ds_count_unique_even</div><div class="fn-hint">per sublist: count unique even values</div></div>
+    <div class="fn-row"><div class="fn-name">ds_sum(xlist)</div><div class="fn-hint">per sublist → total → result.append(total)</div></div>
+    <div class="fn-row"><div class="fn-name">ds_avg(xlist)</div><div class="fn-hint">per sublist → total/count → result.append</div></div>
+    <div class="fn-row"><div class="fn-name">ds_min / ds_max</div><div class="fn-hint">best=sub[0] → for v: if v&lt;best → result.append(best)</div></div>
+    <div class="fn-row"><div class="fn-name">ds_evenmax(xlist)</div><div class="fn-hint">only even-LENGTH sublists → find max → append</div></div>
+    <div class="fn-row"><div class="fn-name">ds_minlength(xlist)</div><div class="fn-hint">only sublists with len&gt;2 → find min → append</div></div>
+    <div class="fn-row"><div class="fn-name">ds_max_even(xlist)</div><div class="fn-hint">per sublist: max_even=None; if v%2==0 and (None or v&gt;max_even)</div></div>
+    <div class="fn-row"><div class="fn-name">summaxes(a)</div><div class="fn-hint">for sublist → find max → total+=max → return total</div></div>
+    <div class="fn-row"><div class="fn-name">summins(a)</div><div class="fn-hint">same but min</div></div>
+    <div class="fn-row"><div class="fn-name">global_min(xlist)</div><div class="fn-hint">smallest=xlist[0][0] → double loop → return smallest</div></div>
+    <div class="fn-row"><div class="fn-name">count_all(xlist)</div><div class="fn-hint">double loop → count+=1 → return count</div></div>
+  </div>
+  <div class="card">
+    <h2>🔤 Strings / Recursion</h2>
+    <div class="fn-row"><div class="fn-name">count_vowels(s)</div><div class="fn-hint">if ch in 'aeiouAEIOU': count+=1</div></div>
+    <div class="fn-row"><div class="fn-name">count_consonants(text)</div><div class="fn-hint">if 'a'&lt;=ch&lt;='z' and ch not in vowels: count+=1</div></div>
+    <div class="fn-row"><div class="fn-name">count_digits(text)</div><div class="fn-hint">if '0'&lt;=ch&lt;='9': count+=1</div></div>
+    <div class="fn-row"><div class="fn-name">is_palindrome(s)</div><div class="fn-hint">i=0,j=len-1 → while i&lt;j: if s[i]!=s[j]: False → i+=1,j-=1</div></div>
+    <div class="fn-row"><div class="fn-name">is_pangram(s)</div><div class="fn-hint">seen=[0]*26 → mark each letter → if any 0: False</div></div>
+    <div class="fn-row"><div class="fn-name">is_rotation(s1,s2)</div><div class="fn-hint">doubled=s1+s1 → if s2 in doubled (sliding window): True</div></div>
+    <div class="fn-row"><div class="fn-name">reverse_string(s)</div><div class="fn-hint">i=len-1 → while i&gt;=0: result+=s[i]; i-=1</div></div>
+    <div class="fn-row"><div class="fn-name">alternate_case(s)</div><div class="fn-hint">upper=True → if lower&amp;upper: chr(ord-32) → upper=not upper</div></div>
+    <div class="fn-row"><div class="fn-name">digit_sum(n)</div><div class="fn-hint">if n==0: return 0 → return n%10 + digit_sum(n//10)</div></div>
+    <div class="fn-row"><div class="fn-name">digit_count(n)</div><div class="fn-hint">if n&lt;10: return 1 → return 1+digit_count(n//10)</div></div>
+  </div>
+  <div class="card">
+    <h2>📦 Dicts</h2>
+    <div class="fn-row"><div class="fn-name">count_letters(text)</div><div class="fn-hint">d={} → for x in text.lower(): if x in d: d[x]+=1 else d[x]=1</div></div>
+    <div class="fn-row"><div class="fn-name">word_lengths(text)</div><div class="fn-hint">for w in text.split(): d[w]=len(w)</div></div>
+    <div class="fn-row"><div class="fn-name">query_grades(grades,subject,min_score)</div><div class="fn-hint">subj=info[0], score=info[1] → two separate lists</div></div>
+    <div class="fn-row"><div class="fn-name">query_catalog(catalog,artist,min_dur)</div><div class="fn-hint">art=info[0], dur=info[1] → same pattern</div></div>
+    <div class="fn-row"><div class="fn-name">by_type(pb,contact_type)</div><div class="fn-hint">if pb[name][1]==contact_type: result+=[name]</div></div>
+    <div class="fn-row"><div class="fn-name">invert_and_group(d)</div><div class="fn-hint">inverse={} → val=d[k] → if val not in inverse: []→ inverse[val].append(k)</div></div>
+  </div>
+  <div class="card">
+    <h2>🔗 DLL (doubly linked — has 'head' and 'tail' sentinels)</h2>
+    <div class="fn-row"><div class="fn-name">create_dll()</div><div class="fn-hint">return {'head':{'prev':None,'next':'tail'},'tail':{'prev':'head','next':None}}</div></div>
+    <div class="fn-row"><div class="fn-name">enqueue(dll,x)</div><div class="fn-hint">prev=dll['tail']['prev'] → dll[x]={prev,tail} → fix prev&amp;tail pointers</div></div>
+    <div class="fn-row"><div class="fn-name">dequeue(dll)</div><div class="fn-hint">first=dll['head']['next'] → fix head→right, right→head → del first</div></div>
+    <div class="fn-row"><div class="fn-name">ds_queue(listx,v1)</div><div class="fn-hint">create DLL → append v1 → enqueue all → dequeue twice</div></div>
+    <div class="fn-row"><div class="fn-name">ds_stack(listx,v1)</div><div class="fn-hint">create DLL → insert each after head → pop twice from head</div></div>
+    <div class="fn-row"><div class="fn-name">remove_last2(dll)</div><div class="fn-hint">n1=tail.prev, n2=n1.prev, left=n2.prev → left.next=tail, tail.prev=left → del n1,n2</div></div>
+    <div class="fn-row"><div class="fn-name">dll_max(dll)</div><div class="fn-hint">start at head.next → while!=tail: track max → advance</div></div>
+    <div class="fn-row"><div class="fn-name">dll_sorted(dll)</div><div class="fn-hint">walk: if current &gt; next: return False → return True</div></div>
+    <div class="fn-row"><div class="fn-name">swap_ends(dll)</div><div class="fn-hint">first=head.next, last=tail.prev → rewire all 4 surrounding pointers</div></div>
+  </div>
+  <div class="card">
+    <h2>🔗 SLL (singly linked — uses None as terminator)</h2>
+    <div class="fn-row"><div class="fn-name">Structure</div><div class="fn-hint">{'head': n1, n1: n2, n2: None} — current=llist['head'] while current is not None</div></div>
+    <div class="fn-row"><div class="fn-name">sum_sll(llist)</div><div class="fn-hint">current=llist['head'] → while not None: total+=current</div></div>
+    <div class="fn-row"><div class="fn-name">add_front(llist,node)</div><div class="fn-hint">llist[node]=llist['head'] → llist['head']=node</div></div>
+    <div class="fn-row"><div class="fn-name">traverse(llist)</div><div class="fn-hint">while current is not None: print(current) → advance</div></div>
+  </div>
+  <div class="card">
+    <h2>📚 Stack (plain list)</h2>
+    <div class="fn-row"><div class="fn-name">push(s,e)</div><div class="fn-hint">s.append(e) → return s</div></div>
+    <div class="fn-row"><div class="fn-name">pop_top(s)</div><div class="fn-hint">return s.pop()</div></div>
+    <div class="fn-row"><div class="fn-name">top(s)</div><div class="fn-hint">return s[-1]</div></div>
+    <div class="fn-row"><div class="fn-name">is_empty(s)</div><div class="fn-hint">return len(s)==0</div></div>
+    <div class="fn-row"><div class="fn-name">reverse_with_stack(lst)</div><div class="fn-hint">push all → pop all into result</div></div>
+  </div>
+  <div class="card">
+    <h2>🌲 Binary Tree (BFS — queue style)</h2>
+    <div class="fn-row"><div class="fn-name">Structure</div><div class="fn-hint">{'root':{'L':lc,'R':rc}, lc:{'L':None,'R':None}, ...}</div></div>
+    <div class="fn-row"><div class="fn-name">btc(tree,root)</div><div class="fn-hint">BFS queue → if isinstance(int/float): total+=current</div></div>
+    <div class="fn-row"><div class="fn-name">between(tree,root,lo,hi)</div><div class="fn-hint">BFS → if lo&lt;=current&lt;=hi: append</div></div>
+    <div class="fn-row"><div class="fn-name">count_leaves(tree,root)</div><div class="fn-hint">BFS → if lc is None and rc is None: count+=1</div></div>
+    <div class="fn-row"><div class="fn-name">countnodesbtree(btree)</div><div class="fn-hint">recursive inner def traverse(node) → count=1 + L + R</div></div>
+  </div>
+  <div class="card">
+    <h2>🕸 Graph (edge list)</h2>
+    <div class="fn-row"><div class="fn-name">degrees(graph)</div><div class="fn-hint">for u,v: degsum[u]+=1, degsum[v]+=1</div></div>
+    <div class="fn-row"><div class="fn-name">isolated_nodes(graph)</div><div class="fn-hint">degrees → if degsum[k]==1: append</div></div>
+    <div class="fn-row"><div class="fn-name">hub_nodes(graph)</div><div class="fn-hint">degrees → if degsum[k]&gt;2: append</div></div>
+  </div>
+</div>
+
+<!-- ══════════ MAP TAB ══════════ -->
+<div id="tab-map" class="section map-wrap">
+<svg viewBox="0 0 900 780" xmlns="http://www.w3.org/2000/svg" width="900" style="max-width:100%;background:#010409">
+<defs>
+  <filter id="glow-blue"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <filter id="glow-green"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <filter id="glow-red"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#30363d"/></marker>
+</defs>
+
+<rect x="0" y="0" width="900" height="780" fill="#010409"/>
+
+<line x1="0" y1="130" x2="900" y2="130" stroke="#161b22" stroke-width="1"/>
+<line x1="0" y1="290" x2="900" y2="290" stroke="#161b22" stroke-width="1"/>
+<line x1="0" y1="450" x2="900" y2="450" stroke="#161b22" stroke-width="1"/>
+<line x1="0" y1="620" x2="900" y2="620" stroke="#161b22" stroke-width="1"/>
+
+<text x="450" y="22" text-anchor="middle" fill="#8b949e" font-size="10" font-family="monospace" letter-spacing="3">PROF. FIUMARA — PYTHON EXAM MAP — UNIME</text>
+
+<line x1="450" y1="90" x2="220" y2="130" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="450" y1="90" x2="680" y2="130" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr)"/>
+
+<line x1="130" y1="184" x2="67" y2="250" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="180" y1="184" x2="193" y2="250" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="220" y1="184" x2="319" y2="250" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="255" y1="184" x2="445" y2="250" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr)"/>
+
+<line x1="630" y1="184" x2="571" y2="250" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="680" y1="184" x2="697" y2="250" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="730" y1="184" x2="823" y2="250" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr)"/>
+
+<line x1="319" y1="318" x2="330" y2="390" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr)"/>
+
+<line x1="697" y1="318" x2="630" y2="390" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="823" y1="318" x2="800" y2="390" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr)"/>
+
+<line x1="67" y1="318" x2="380" y2="695" stroke="#1a1a2e" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="193" y1="318" x2="400" y2="695" stroke="#1a1a2e" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="445" y1="318" x2="430" y2="695" stroke="#1a1a2e" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="571" y1="318" x2="460" y2="695" stroke="#1a1a2e" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="330" y1="460" x2="415" y2="695" stroke="#1a1a2e" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="620" y1="460" x2="490" y2="695" stroke="#1a1a2e" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="795" y1="460" x2="520" y2="695" stroke="#1a1a2e" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="845" y1="318" x2="540" y2="690" stroke="#1a1a2e" stroke-width="1.5" marker-end="url(#arr)"/>
+
+<rect x="350" y="32" width="200" height="60" rx="8" fill="#0d1d30" stroke="#1f6feb" stroke-width="2" filter="url(#glow-blue)"/>
+<text x="450" y="57" text-anchor="middle" fill="#58a6ff" font-size="13" font-weight="bold" font-family="monospace">🎯 START</text>
+<text x="450" y="74" text-anchor="middle" fill="#8b949e" font-size="10" font-family="monospace">Python Exam Question</text>
+<rect x="415" y="82" width="70" height="14" rx="4" fill="#1f6feb"/>
+<text x="450" y="92" text-anchor="middle" fill="#fff" font-size="9" font-weight="bold" font-family="monospace">Lv. 1</text>
+
+<rect x="100" y="132" width="160" height="52" rx="8" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
+<text x="180" y="154" text-anchor="middle" fill="#e3b341" font-size="12" font-weight="bold" font-family="monospace">🐍 Pure Python</text>
+<text x="180" y="170" text-anchor="middle" fill="#8b949e" font-size="10" font-family="monospace">No data structure</text>
+
+<rect x="580" y="132" width="180" height="52" rx="8" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
+<text x="670" y="154" text-anchor="middle" fill="#79c0ff" font-size="12" font-weight="bold" font-family="monospace">🔗 Data Structures</text>
+<text x="670" y="170" text-anchor="middle" fill="#8b949e" font-size="10" font-family="monospace">DLL / SLL / Tree / Graph</text>
+
+<rect x="8" y="252" width="118" height="66" rx="8" fill="#0d2818" stroke="#238636" stroke-width="1.5"/>
+<text x="67" y="272" text-anchor="middle" fill="#56d364" font-size="11" font-weight="bold" font-family="monospace">📋 Flat List</text>
+<text x="67" y="287" text-anchor="middle" fill="#8b949e" font-size="9" font-family="monospace">onlyeven, sort,</text>
+<text x="67" y="299" text-anchor="middle" fill="#8b949e" font-size="9" font-family="monospace">count, min/max</text>
+<rect x="22" y="306" width="32" height="12" rx="3" fill="#0d2818" stroke="#238636"/>
+<text x="38" y="315" text-anchor="middle" fill="#56d364" font-size="8" font-weight="bold" font-family="monospace">Lv.2</text>
+<text x="90" y="315" text-anchor="middle" fill="#e3b341" font-size="9" font-family="monospace">★★★★</text>
+
+<rect x="134" y="252" width="118" height="66" rx="8" fill="#0d2818" stroke="#238636" stroke-width="1.5"/>
+<text x="193" y="272" text-anchor="middle" fill="#56d364" font-size="11" font-weight="bold" font-family="monospace">🗂 Nested List</text>
+<text x="193" y="287" text-anchor="middle" fill="#8b949e" font-size="9" font-family="monospace">xlist, flatten,</text>
+<text x="193" y="299" text-anchor="middle" fill="#8b949e" font-size="9" font-family="monospace">ds_sum/avg/max</text>
+<rect x="148" y="306" width="32" height="12" rx="3" fill="#0d2818" stroke="#238636"/>
+<text x="164" y="315" text-anchor="middle" fill="#56d364" font-size="8" font-weight="bold" font-family="monospace">Lv.3</text>
+<text x="216" y="315" text-anchor="middle" fill="#e3b341" font-size="9" font-family="monospace">★★★★</text>
+
+<rect x="260" y="252" width="118" height="66" rx="8" fill="#1a1a2e" stroke="#8b5cf6" stroke-width="1.5"/>
+<text x="319" y="272" text-anchor="middle" fill="#c084fc" font-size="11" font-weight="bold" font-family="monospace">🔤 Strings</text>
+<text x="319" y="287" text-anchor="middle" fill="#8b949e" font-size="9" font-family="monospace">palindrome, vowels,</text>
+<text x="319" y="299" text-anchor="middle" fill="#8b949e" font-size="9" font-family="monospace">pangram, rotation</text>
+<rect x="274" y="306" width="32" height="12" rx="3" fill="#1a1a2e" stroke="#8b5cf6"/>
+<text x="290" y="315" text-anchor="middle" fill="#c084fc" font-size="8" font-weight="bold" font-family="monospace">Lv.5</text>
+<text x="340" y="315" text-anchor="middle" fill="#e3b341" font-size="9" font-family="monospace">★★★</text>
+
+<rect x="386" y="252" width="118" height="66" rx="8" fill="#2e1a00" stroke="#d29922" stroke-width="1.5"/>
+<text x="445" y="272" text-anchor="middle" fill="#e3b341" font-size="11" font-weight="bold" font-family="monospace">📦 Dict</text>
+<text x="445" y="287" text-anchor="middle" fill="#8b949e" font-size="9" font-family="monospace">count_letters,</text>
+<text x="445" y="299" text-anchor="middle" fill="#8b949e" font-size="9" font-family="monospace">query, invert</text>
+<rect x="400" y="306" width="32" height="12" rx="3" fill="#2e1a00" stroke="#d29922"/>
+<text x="416" y="315" text-anchor="middle" fill="#e3b341" font-size="8" font-weight="bold" font-family="monospace">Lv.4</text>
+<text x="466" y="315" text-anchor="middle" fill="#e3b341" font-size="9" font-family="monospace">★★★</text>
+
+<rect x="512" y="252" width="118" height="66" rx="8" fill="#1a2e2e" stroke="#3fb950" stroke-width="1.5"/>
+<text x="571" y="272" text-anchor="middle" fill="#3fb950" font-size="11" font-weight="bold" font-family="monospace">📚 Stack</text>
+<text x="571" y="287" text-anchor="middle" fill="#8b949e" font-size="9" font-family="monospace">push, pop, top,</text>
+<text x="571" y="299" text-anchor="middle" fill="#8b949e" font-size="9" font-family="monospace">reverse_with_stack</text>
+<rect x="526" y="306" width="32" height="12" rx="3" fill="#1a2e2e" stroke="#3fb950"/>
+<text x="542" y="315" text-anchor="middle" fill="#3fb950" font-size="8" font-weight="bold" font-family="monospace">Lv.4</text>
+<text x="588" y="315" text-anchor="middle" fill="#e3b341" font-size="9" font-family="monospace">★★</text>
+
+<rect x="638" y="252" width="118" height="66" rx="8" fill="#0d1d30" stroke="#58a6ff" stroke-width="1.5"/>
+<text x="697" y="272" text-anchor="middle" fill="#58a6ff" font-size="11" font-weight="bold" font-family="monospace">🔗 SLL</text>
+<text x="697" y="287" text-anchor="middle" fill="#8b949e" font-size="9" font-family="monospace">sum, add_front,</text>
+<text x="697" y="299" text-anchor="middle" fill="#8b949e" font-size="9" font-family="monospace">traverse (None)</text>
+<rect x="652" y="306" width="32" height="12" rx="3" fill="#0d1d30" stroke="#58a6ff"/>
+<text x="668" y="315" text-anchor="middle" fill="#58a6ff" font-size="8" font-weight="bold" font-family="monospace">Lv.6</text>
+<text x="718" y="315" text-anchor="middle" fill="#e3b341" font-size="9" font-family="monospace">★★★</text>
+
+<rect x="764" y="252" width="128" height="66" rx="8" fill="#3d1a1a" stroke="#ff7b72" stroke-width="2" filter="url(#glow-red)"/>
+<text x="828" y="272" text-anchor="middle" fill="#ff7b72" font-size="11" font-weight="bold" font-family="monospace">⚔️ DLL</text>
+<text x="828" y="287" text-anchor="middle" fill="#8b949e" font-size="9" font-family="monospace">enqueue, dequeue,</text>
+<text x="828" y="299" text-anchor="middle" fill="#8b949e" font-size="9" font-family="monospace">max, sorted, swap</text>
+<rect x="778" y="306" width="32" height="12" rx="3" fill="#3d1a1a" stroke="#ff7b72"/>
+<text x="794" y="315" text-anchor="middle" fill="#ff7b72" font-size="8" font-weight="bold" font-family="monospace">Lv.7</text>
+<text x="850" y="315" text-anchor="middle" fill="#e3b341" font-size="9" font-family="monospace">★★★★★</text>
+
+<rect x="260" y="392" width="140" height="66" rx="8" fill="#1a1a2e" stroke="#8b5cf6" stroke-width="1.5"/>
+<text x="330" y="412" text-anchor="middle" fill="#c084fc" font-size="11" font-weight="bold" font-family="monospace">🔄 Recursion</text>
+<text x="330" y="427" text-anchor="middle" fill="#8b949e" font-size="9" font-family="monospace">digit_sum(n),</text>
+<text x="330" y="439" text-anchor="middle" fill="#8b949e" font-size="9" font-family="monospace">digit_count(n)</text>
+<rect x="295" y="446" width="32" height="12" rx="3" fill="#1a1a2e" stroke="#8b5cf6"/>
+<text x="311" y="455" text-anchor="middle" fill="#c084fc" font-size="8" font-weight="bold" font-family="monospace">Lv.6</text>
+<text x="346" y="455" text-anchor="middle" fill="#e3b341" font-size="9" font-family="monospace">★★</text>
+
+<rect x="540" y="392" width="160" height="66" rx="8" fill="#0d2818" stroke="#56d364" stroke-width="2" filter="url(#glow-green)"/>
+<text x="620" y="412" text-anchor="middle" fill="#56d364" font-size="11" font-weight="bold" font-family="monospace">🌲 Binary Tree</text>
+<text x="620" y="427" text-anchor="middle" fill="#8b949e" font-size="9" font-family="monospace">BFS: btc, between,</text>
+<text x="620" y="439" text-anchor="middle" fill="#8b949e" font-size="9" font-family="monospace">count_leaves</text>
+<rect x="582" y="446" width="32" height="12" rx="3" fill="#0d2818" stroke="#56d364"/>
+<text x="598" y="455" text-anchor="middle" fill="#56d364" font-size="8" font-weight="bold" font-family="monospace">Lv.8</text>
+<text x="634" y="455" text-anchor="middle" fill="#e3b341" font-size="9" font-family="monospace">★★★★</text>
+
+<rect x="720" y="392" width="150" height="66" rx="8" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
+<text x="795" y="412" text-anchor="middle" fill="#79c0ff" font-size="11" font-weight="bold" font-family="monospace">🕸 Graph</text>
+<text x="795" y="427" text-anchor="middle" fill="#8b949e" font-size="9" font-family="monospace">degrees, isolated,</text>
+<text x="795" y="439" text-anchor="middle" fill="#8b949e" font-size="9" font-family="monospace">hub_nodes</text>
+<rect x="759" y="446" width="32" height="12" rx="3" fill="#161b22" stroke="#58a6ff"/>
+<text x="775" y="455" text-anchor="middle" fill="#58a6ff" font-size="8" font-weight="bold" font-family="monospace">Lv.9</text>
+<text x="808" y="455" text-anchor="middle" fill="#e3b341" font-size="9" font-family="monospace">★★★</text>
+
+<rect x="270" y="635" width="360" height="100" rx="12" fill="#1a0a0a" stroke="#ff7b72" stroke-width="3" filter="url(#glow-red)"/>
+<text x="450" y="665" text-anchor="middle" fill="#ff7b72" font-size="16" font-weight="bold" font-family="monospace">💀 VICTOR</text>
+<text x="450" y="684" text-anchor="middle" fill="#ffa657" font-size="11" font-family="monospace">FINAL EXAM — PROF. FIUMARA</text>
+<text x="450" y="700" text-anchor="middle" fill="#8b949e" font-size="10" font-family="monospace">All topics combined • Timed • No notes</text>
+<rect x="395" y="710" width="50" height="16" rx="4" fill="#3d0000" stroke="#ff7b72"/>
+<text x="420" y="721" text-anchor="middle" fill="#ff7b72" font-size="9" font-weight="bold" font-family="monospace">Lv. 20</text>
+<text x="460" y="721" text-anchor="middle" fill="#e3b341" font-size="11" font-family="monospace">★★★★★</text>
+
+<rect x="10" y="740" width="880" height="30" rx="4" fill="#161b22" stroke="#30363d"/>
+<text x="20" y="759" fill="#8b949e" font-size="9" font-family="monospace">★ = exam frequency (Fiumara)  |  Lv = difficulty  |  ★★★★★ DLL = most common  |  use 🎯 Flowchart tab to navigate</text>
+</svg>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════════
+function escHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ═══════════════════════════════════════════════════════
+//  DECISION TREE
+// ═══════════════════════════════════════════════════════
+const TREE = {
+// ── ROOT ──────────────────────────────────────
+"q1":{type:"q",label:"Q1 of 5 max",
+  text:"DATA STRUCTURE? (DLL / SLL / Tree / Graph / Stack in the problem?)",
+  yes:"q-ds1", no:"q-py1"},
+
+// ── DS BRANCH ─────────────────────────────────
+"q-ds1":{type:"q",label:"Q2",
+  text:"DOUBLY LINKED LIST? (nodes have BOTH prev AND next keys)",
+  yes:"q-dll1", no:"q-ds2"},
+
+"q-ds2":{type:"q",label:"Q2",
+  text:"BINARY TREE? (nodes have L and R children, BFS traversal)",
+  yes:"q-tree1", no:"q-ds3"},
+
+"q-ds3":{type:"q",label:"Q2",
+  text:"GRAPH? (input is a list of edge tuples like [(1,2),(2,3)])",
+  yes:"q-graph1", no:"q-ds4"},
+
+"q-ds4":{type:"q",label:"Q2",
+  text:"STACK? (simple list used as LIFO — push/pop)",
+  yes:"q-stack1", no:"q-sll1"},
+
+// ── DLL ───────────────────────────────────────
+"q-dll1":{type:"q",label:"Q3 — DLL",
+  text:"Does it ADD or REMOVE nodes from the DLL?",
+  yes:"q-dll2", no:"q-dll3"},
+
+"q-dll2":{type:"q",label:"Q4 — DLL",
+  text:"QUEUE style? (add at TAIL / remove from HEAD — FIFO)",
+  yes:"q-dll-q1", no:"q-dll-s1"},
+
+"q-dll-q1":{type:"q",label:"Q5 — DLL Queue",
+  text:"ADDING a new element (not removing)?",
+  yes:"a-enqueue", no:"q-dll-q2"},
+
+"q-dll-q2":{type:"q",label:"Q5 — DLL Queue",
+  text:"BUILD a full queue from a list AND dequeue twice?",
+  yes:"a-dsqueue", no:"a-dequeue"},
+
+"q-dll-s1":{type:"q",label:"Q5 — DLL Stack",
+  text:"Remove the LAST 2 nodes?",
+  yes:"a-removelast2", no:"a-dsstack"},
+
+"q-dll3":{type:"q",label:"Q4 — DLL",
+  text:"Find the MAXIMUM value in the DLL?",
+  yes:"a-dllmax", no:"q-dll4"},
+
+"q-dll4":{type:"q",label:"Q5 — DLL",
+  text:"SWAP the first and last node?",
+  yes:"a-swapends", no:"q-dll5"},
+
+"q-dll5":{type:"q",label:"Q6 — DLL",
+  text:"Check if the DLL is SORTED (ascending)?",
+  yes:"a-dllsorted", no:"a-createdll"},
+
+// ── TREE ──────────────────────────────────────
+"q-tree1":{type:"q",label:"Q3 — Tree",
+  text:"SUM all numeric node values?",
+  yes:"a-btc", no:"q-tree2"},
+
+"q-tree2":{type:"q",label:"Q4 — Tree",
+  text:"Find nodes whose value is BETWEEN two numbers (lo, hi)?",
+  yes:"a-between", no:"a-countleaves"},
+
+// ── GRAPH ─────────────────────────────────────
+"q-graph1":{type:"q",label:"Q3 — Graph",
+  text:"Count the DEGREE (connections) of ALL nodes?",
+  yes:"a-degrees", no:"q-graph2"},
+
+"q-graph2":{type:"q",label:"Q4 — Graph",
+  text:"Find ISOLATED nodes (exactly 1 connection)?",
+  yes:"a-isolated", no:"a-hubnodes"},
+
+// ── STACK (list-based) ────────────────────────
+"q-stack1":{type:"q",label:"Q3 — Stack",
+  text:"REVERSE a list using the stack?",
+  yes:"a-revstack", no:"q-stack2"},
+
+"q-stack2":{type:"q",label:"Q4 — Stack",
+  text:"ADD an element (push)?",
+  yes:"a-push", no:"q-stack3"},
+
+"q-stack3":{type:"q",label:"Q5 — Stack",
+  text:"REMOVE top element (pop)?",
+  yes:"a-poptop", no:"q-stack4"},
+
+"q-stack4":{type:"q",label:"Q6 — Stack",
+  text:"PEEK at top without removing?",
+  yes:"a-top", no:"a-isempty"},
+
+// ── SLL ───────────────────────────────────────
+"q-sll1":{type:"q",label:"Q3 — SLL",
+  text:"SUM all node values?",
+  yes:"a-sumsll", no:"q-sll2"},
+
+"q-sll2":{type:"q",label:"Q4 — SLL",
+  text:"ADD a node at the FRONT?",
+  yes:"a-addfront", no:"a-traverse"},
+
+// ── PURE PYTHON ROOT ──────────────────────────
+"q-py1":{type:"q",label:"Q2",
+  text:"NESTED list? (input is a list of lists, often called xlist)",
+  yes:"q-nest1", no:"q-not-nest"},
+
+"q-not-nest":{type:"q",label:"Q2",
+  text:"STRING? (input is text / letters / words)",
+  yes:"q-str1", no:"q-not-str"},
+
+"q-not-str":{type:"q",label:"Q2",
+  text:"DICTIONARY? (input or output is a dict)",
+  yes:"q-dict1", no:"q-flat1"},
+
+// ── NESTED BRANCH ─────────────────────────────
+"q-nest1":{type:"q",label:"Q3 — Nested",
+  text:"Returns a SINGLE NUMBER (not a list)?",
+  yes:"q-nest-single", no:"q-nest-list"},
+
+"q-nest-single":{type:"q",label:"Q4 — Nested→Single",
+  text:"Sum the MAX value from each sublist?",
+  yes:"a-summaxes", no:"q-nest-s2"},
+
+"q-nest-s2":{type:"q",label:"Q5",
+  text:"Sum the MIN value from each sublist?",
+  yes:"a-summins", no:"q-nest-s3"},
+
+"q-nest-s3":{type:"q",label:"Q6",
+  text:"Global MINIMUM across ALL sublists?",
+  yes:"a-globalmin", no:"a-countall"},
+
+"q-nest-list":{type:"q",label:"Q4 — Nested→List",
+  text:"Output is FLAT (a plain list, not nested anymore)?",
+  yes:"q-flatten", no:"q-nest-perrow"},
+
+"q-flatten":{type:"q",label:"Q5 — Flatten",
+  text:"Filter EVEN numbers only?",
+  yes:"q-flat-even", no:"q-flat-no-even"},
+
+"q-flat-even":{type:"q",label:"Q6",
+  text:"Also remove DUPLICATES?",
+  yes:"a-flatuniqeven", no:"a-flateven"},
+
+"q-flat-no-even":{type:"q",label:"Q6",
+  text:"Remove DUPLICATES (no condition on value)?",
+  yes:"a-flatuniq", no:"q-flat-special"},
+
+"q-flat-special":{type:"q",label:"Q7",
+  text:"Max of EVEN-LENGTH sublists?",
+  yes:"a-dsevenmax", no:"a-dsminlength"},
+
+"q-nest-perrow":{type:"q",label:"Q5 — Nested→ListPerRow",
+  text:"Each sublist keeps its OWN shape (output is still list of lists)?",
+  yes:"q-nest-lol", no:"q-nest-oneperrow"},
+
+"q-nest-lol":{type:"q",label:"Q6 — List of Lists",
+  text:"FILTER values inside each sublist (keep even/odd)?",
+  yes:"q-lol-filter", no:"a-uniqueds"},
+
+"q-lol-filter":{type:"q",label:"Q7",
+  text:"Keep EVEN values in each sublist?",
+  yes:"a-evends", no:"a-onlyoddds"},
+
+"q-nest-oneperrow":{type:"q",label:"Q6 — One Number Per Row",
+  text:"One number per sublist — MAX of each sublist?",
+  yes:"a-dsmax", no:"q-nest-or2"},
+
+"q-nest-or2":{type:"q",label:"Q7",
+  text:"MIN of each sublist?",
+  yes:"a-dsmin", no:"q-nest-or3"},
+
+"q-nest-or3":{type:"q",label:"Q8",
+  text:"SUM of each sublist?",
+  yes:"a-dssum", no:"q-nest-or4"},
+
+"q-nest-or4":{type:"q",label:"Q9",
+  text:"AVERAGE of each sublist?",
+  yes:"a-dsavg", no:"q-nest-or5"},
+
+"q-nest-or5":{type:"q",label:"Q10",
+  text:"COUNT even numbers in each sublist?",
+  yes:"a-countevends", no:"q-nest-or6"},
+
+"q-nest-or6":{type:"q",label:"Q11",
+  text:"COUNT negative numbers in each sublist?",
+  yes:"a-countneg", no:"a-dscountuniqeven"},
+
+// ── STRING BRANCH ─────────────────────────────
+"q-str1":{type:"q",label:"Q3 — String",
+  text:"CHECK a PROPERTY (is it palindrome / pangram / rotation)?",
+  yes:"q-str-check", no:"q-str-count"},
+
+"q-str-check":{type:"q",label:"Q4 — String Check",
+  text:"PALINDROME (same forwards and backwards)?",
+  yes:"a-ispalindrome", no:"q-str-check2"},
+
+"q-str-check2":{type:"q",label:"Q5",
+  text:"PANGRAM (contains every letter a-z)?",
+  yes:"a-ispangram", no:"a-isrotation"},
+
+"q-str-count":{type:"q",label:"Q4 — String Count",
+  text:"COUNT something in the string?",
+  yes:"q-str-count2", no:"q-str-transform"},
+
+"q-str-count2":{type:"q",label:"Q5",
+  text:"Count VOWELS (a,e,i,o,u)?",
+  yes:"a-countvowels", no:"q-str-count3"},
+
+"q-str-count3":{type:"q",label:"Q6",
+  text:"Count CONSONANTS?",
+  yes:"a-countcons", no:"a-countdigits"},
+
+"q-str-transform":{type:"q",label:"Q5 — String Transform",
+  text:"REVERSE the string?",
+  yes:"a-revstring", no:"q-str-t2"},
+
+"q-str-t2":{type:"q",label:"Q6",
+  text:"ALTERNATE uppercase/lowercase letters?",
+  yes:"a-altcase", no:"q-rec1"},
+
+"q-rec1":{type:"q",label:"Q6 — Recursion",
+  text:"RECURSIVE function with a number n?",
+  yes:"q-rec2", no:"a-revstring"},
+
+"q-rec2":{type:"q",label:"Q7",
+  text:"SUM of digits (123 → 1+2+3=6)?",
+  yes:"a-digitsum", no:"a-digitcount"},
+
+// ── DICT BRANCH ───────────────────────────────
+"q-dict1":{type:"q",label:"Q3 — Dict",
+  text:"QUERY / FILTER by two conditions (artist+duration, subject+score)?",
+  yes:"q-dict-q1", no:"q-dict-build"},
+
+"q-dict-q1":{type:"q",label:"Q4 — Query",
+  text:"By ARTIST and minimum DURATION (catalog/music)?",
+  yes:"a-querycatalog", no:"q-dict-q2"},
+
+"q-dict-q2":{type:"q",label:"Q5",
+  text:"By SUBJECT and minimum SCORE (grades)?",
+  yes:"a-querygrades", no:"a-bytype"},
+
+"q-dict-build":{type:"q",label:"Q4 — Dict Build",
+  text:"Count LETTER frequency (char → count)?",
+  yes:"a-countletters", no:"q-dict-b2"},
+
+"q-dict-b2":{type:"q",label:"Q5",
+  text:"Map each WORD to its LENGTH?",
+  yes:"a-wordlengths", no:"a-invertgroup"},
+
+// ── FLAT LIST BRANCH ──────────────────────────
+"q-flat1":{type:"q",label:"Q3 — Flat List",
+  text:"SORT the list (insertion sort)?",
+  yes:"q-sort1", no:"q-flat2"},
+
+"q-sort1":{type:"q",label:"Q4",
+  text:"DESCENDING order?",
+  yes:"a-sortdesc", no:"a-sortasc"},
+
+"q-flat2":{type:"q",label:"Q4",
+  text:"SEPARATE into [even_list, odd_list] result?",
+  yes:"a-separate", no:"q-flat3"},
+
+"q-flat3":{type:"q",label:"Q5",
+  text:"DOT PRODUCT of two vectors?",
+  yes:"a-scalar", no:"q-flat4"},
+
+"q-flat4":{type:"q",label:"Q6 — Flat",
+  text:"FILTER (return a shorter list of matching items)?",
+  yes:"q-filter1", no:"q-count1"},
+
+"q-filter1":{type:"q",label:"Q7 — Filter",
+  text:"Keep EVEN numbers?",
+  yes:"q-feven", no:"q-filter2"},
+
+"q-feven":{type:"q",label:"Q8",
+  text:"Also remove DUPLICATES?",
+  yes:"a-uniqueeven", no:"a-onlyeven"},
+
+"q-filter2":{type:"q",label:"Q8",
+  text:"Keep ODD numbers?",
+  yes:"a-onlyodd", no:"q-filter3"},
+
+"q-filter3":{type:"q",label:"Q9",
+  text:"Values GREATER than n?",
+  yes:"a-greaterthan", no:"q-filter4"},
+
+"q-filter4":{type:"q",label:"Q10",
+  text:"Values SMALLER than n?",
+  yes:"a-smallerthan", no:"a-uniquelist"},
+
+"q-count1":{type:"q",label:"Q7 — Count",
+  text:"COUNT something (return a number)?",
+  yes:"q-count2", no:"q-best1"},
+
+"q-count2":{type:"q",label:"Q8",
+  text:"Count EVEN numbers?",
+  yes:"a-counteven", no:"q-count3"},
+
+"q-count3":{type:"q",label:"Q9",
+  text:"Count ODD numbers?",
+  yes:"a-countodd", no:"q-count4"},
+
+"q-count4":{type:"q",label:"Q10",
+  text:"Count values GREATER than n?",
+  yes:"a-countgreater", no:"q-count5"},
+
+"q-count5":{type:"q",label:"Q11",
+  text:"Count specific TARGET value?",
+  yes:"a-countvalue", no:"a-percenteven"},
+
+"q-best1":{type:"q",label:"Q8 — Best/Math",
+  text:"Find MIN or MAX?",
+  yes:"q-best2", no:"q-best3"},
+
+"q-best2":{type:"q",label:"Q9",
+  text:"MIN (not max)?",
+  yes:"a-mymin", no:"a-mymax"},
+
+"q-best3":{type:"q",label:"Q9",
+  text:"SUM all values?",
+  yes:"a-mysum", no:"a-myavg"},
+
+// ═══════════════════════════════════════════════════════
+//  ANSWER NODES — every node has a `code` field
+// ═══════════════════════════════════════════════════════
+
+// ── DLL ANSWERS ──────────────────────────────
+"a-enqueue":{type:"a",name:"enqueue(dll, x)",
+  code:`def enqueue(dll, x):
+    prev = dll['tail']['prev']
+    dll[x] = {'prev': prev, 'next': 'tail'}
+    dll[prev]['next'] = x
+    dll['tail']['prev'] = x
+    return dll`,
+  s1:"prev = dll['tail']['prev']",
+  s2:"dll[x]={'prev':prev,'next':'tail'} → dll[prev]['next']=x → dll['tail']['prev']=x",
+  ret:"return dll"},
+
+"a-dequeue":{type:"a",name:"dequeue(dll)",
+  code:`def dequeue(dll):
+    first = dll['head']['next']
+    if first == 'tail':
+        return dll
+    right = dll[first]['next']
+    dll['head']['next'] = right
+    dll[right]['prev'] = 'head'
+    del dll[first]
+    return dll`,
+  s1:"first = dll['head']['next'] — if first=='tail': return (empty)",
+  s2:"right = dll[first]['next'] → dll['head']['next']=right → dll[right]['prev']='head' → del dll[first]",
+  ret:"return dll"},
+
+"a-dsqueue":{type:"a",name:"ds_queue(listx, v1)",
+  code:`def ds_queue(listx, v1):
+    dll = {'head': {'prev': None, 'next': 'tail'},
+           'tail': {'prev': 'head', 'next': None}}
+    listx.append(v1)
+    for x in listx:
+        prev = dll['tail']['prev']
+        dll[x] = {'prev': prev, 'next': 'tail'}
+        dll[prev]['next'] = x
+        dll['tail']['prev'] = x
+    # dequeue twice
+    for _ in range(2):
+        first = dll['head']['next']
+        right = dll[first]['next']
+        dll['head']['next'] = right
+        dll[right]['prev'] = 'head'
+        del dll[first]
+    return dll`,
+  s1:"create DLL — listx.append(v1) — for x in listx: enqueue at tail",
+  s2:"dequeue twice from head (remove first two)",
+  ret:"return dll"},
+
+"a-removelast2":{type:"a",name:"remove_last2(dll)",
+  code:`def remove_last2(dll):
+    n1 = dll['tail']['prev']
+    n2 = dll[n1]['prev']
+    left = dll[n2]['prev']
+    dll[left]['next'] = 'tail'
+    dll['tail']['prev'] = left
+    del dll[n1]
+    del dll[n2]
+    return dll`,
+  s1:"n1=dll['tail']['prev'] — n2=dll[n1]['prev'] — left=dll[n2]['prev']",
+  s2:"dll[left]['next']='tail' → dll['tail']['prev']=left → del dll[n1] — del dll[n2]",
+  ret:"return dll"},
+
+"a-dsstack":{type:"a",name:"ds_stack(listx, v1)",
+  code:`def ds_stack(listx, v1):
+    dll = {'head': {'prev': None, 'next': 'tail'},
+           'tail': {'prev': 'head', 'next': None}}
+    listx.append(v1)
+    for x in listx:
+        succ = dll['head']['next']
+        dll[x] = {'prev': 'head', 'next': succ}
+        dll['head']['next'] = x
+        dll[succ]['prev'] = x
+    # pop twice from head (LIFO)
+    for _ in range(2):
+        first = dll['head']['next']
+        right = dll[first]['next']
+        dll['head']['next'] = right
+        dll[right]['prev'] = 'head'
+        del dll[first]
+    return dll`,
+  s1:"create DLL — listx.append(v1) — for x: insert after head (LIFO/stack)",
+  s2:"succ=dll['head']['next'] → dll[x]={'prev':'head','next':succ} → fix head&succ pointers",
+  ret:"pop twice from head"},
+
+"a-dllmax":{type:"a",name:"dll_max(dll)",
+  code:`def dll_max(dll):
+    current = dll['head']['next']
+    max_val = current
+    while current != 'tail':
+        if current > max_val:
+            max_val = current
+        current = dll[current]['next']
+    return max_val`,
+  s1:"current = dll['head']['next'] — max_val = current",
+  s2:"while current != 'tail': if current > max_val: max_val=current — current=dll[current]['next']",
+  ret:"return max_val"},
+
+"a-swapends":{type:"a",name:"swap_ends(dll)",
+  code:`def swap_ends(dll):
+    first = dll['head']['next']
+    last = dll['tail']['prev']
+    if first == last:
+        return dll
+    fn = dll[first]['next']
+    lp = dll[last]['prev']
+    # rewire last to head position
+    dll['head']['next'] = last
+    dll[last]['prev'] = 'head'
+    dll[last]['next'] = fn
+    dll[fn]['prev'] = last
+    # rewire first to tail position
+    dll[lp]['next'] = first
+    dll[first]['prev'] = lp
+    dll[first]['next'] = 'tail'
+    dll['tail']['prev'] = first
+    return dll`,
+  s1:"first=dll['head']['next'] — last=dll['tail']['prev']",
+  s2:"rewire: head→last, last→fn, lp→first, first→tail (handle adjacent case!)",
+  ret:"return dll"},
+
+"a-dllsorted":{type:"a",name:"dll_sorted(dll)",
+  code:`def dll_sorted(dll):
+    current = dll['head']['next']
+    while dll[current]['next'] != 'tail':
+        nxt = dll[current]['next']
+        if current > nxt:
+            return False
+        current = nxt
+    return True`,
+  s1:"current=dll['head']['next']",
+  s2:"while dll[current]['next']!='tail': nxt=dll[current]['next'] — if current > nxt: return False — current=nxt",
+  ret:"return True"},
+
+"a-createdll":{type:"a",name:"create_dll()",
+  code:`def create_dll():
+    return {
+        'head': {'prev': None, 'next': 'tail'},
+        'tail': {'prev': 'head', 'next': None}
+    }`,
+  s1:"(no input)",
+  s2:"return {'head':{'prev':None,'next':'tail'}, 'tail':{'prev':'head','next':None}}",
+  ret:"return that dict"},
+
+// ── TREE ANSWERS ──────────────────────────────
+"a-btc":{type:"a",name:"btc(tree, root)",
+  code:`def btc(tree, root):
+    queue = [root]
+    total = 0
+    while queue:
+        current = queue.pop(0)
+        lc = tree[current]['L']
+        rc = tree[current]['R']
+        if lc is not None:
+            queue.append(lc)
+        if rc is not None:
+            queue.append(rc)
+        if isinstance(current, (int, float)):
+            total += current
+    return total`,
+  s1:"queue=[root] — total=0",
+  s2:"current=queue.pop(0) → append L and R if exist → if isinstance(current,(int,float)): total+=current",
+  ret:"return total"},
+
+"a-between":{type:"a",name:"between(tree, root, lo, hi)",
+  code:`def between(tree, root, lo, hi):
+    queue = [root]
+    result = []
+    while queue:
+        current = queue.pop(0)
+        lc = tree[current]['L']
+        rc = tree[current]['R']
+        if lc is not None:
+            queue.append(lc)
+        if rc is not None:
+            queue.append(rc)
+        if isinstance(current, (int, float)):
+            if lo <= current <= hi:
+                result.append(current)
+    return result`,
+  s1:"BFS: queue=[root] — result=[]",
+  s2:"if isinstance(current,(int,float)) and lo<=current<=hi: result.append(current)",
+  ret:"return result"},
+
+"a-countleaves":{type:"a",name:"count_leaves(tree, root)",
+  code:`def count_leaves(tree, root):
+    queue = [root]
+    count = 0
+    while queue:
+        current = queue.pop(0)
+        lc = tree[current]['L']
+        rc = tree[current]['R']
+        if lc is not None:
+            queue.append(lc)
+        if rc is not None:
+            queue.append(rc)
+        if lc is None and rc is None:
+            count += 1
+    return count`,
+  s1:"BFS: queue=[root] — count=0",
+  s2:"if lc is None AND rc is None: count+=1  (it's a leaf!)",
+  ret:"return count"},
+
+// ── GRAPH ANSWERS ─────────────────────────────
+"a-degrees":{type:"a",name:"degrees(graph)",
+  code:`def degrees(graph):
+    degsum = {}
+    for u, v in graph:
+        degsum[u] = degsum.get(u, 0) + 1
+        degsum[v] = degsum.get(v, 0) + 1
+    return degsum`,
+  s1:"degsum = {}",
+  s2:"for u,v in graph: degsum[u]=degsum.get(u,0)+1 — degsum[v]=degsum.get(v,0)+1",
+  ret:"return degsum"},
+
+"a-isolated":{type:"a",name:"isolated_nodes(graph)",
+  code:`def isolated_nodes(graph):
+    degsum = {}
+    for u, v in graph:
+        degsum[u] = degsum.get(u, 0) + 1
+        degsum[v] = degsum.get(v, 0) + 1
+    result = []
+    for k in degsum:
+        if degsum[k] == 1:
+            result.append(k)
+    return result`,
+  s1:"build degsum (same as degrees) — result=[]",
+  s2:"for k in degsum: if degsum[k]==1: result.append(k)",
+  ret:"return result"},
+
+"a-hubnodes":{type:"a",name:"hub_nodes(graph)",
+  code:`def hub_nodes(graph):
+    degsum = {}
+    for u, v in graph:
+        degsum[u] = degsum.get(u, 0) + 1
+        degsum[v] = degsum.get(v, 0) + 1
+    result = []
+    for k in degsum:
+        if degsum[k] > 2:
+            result.append(k)
+    return result`,
+  s1:"build degsum — result=[]",
+  s2:"for k in degsum: if degsum[k]>2: result.append(k)",
+  ret:"return result"},
+
+// ── STACK ANSWERS ─────────────────────────────
+"a-revstack":{type:"a",name:"reverse_with_stack(lst)",
+  code:`def reverse_with_stack(lst):
+    stack = []
+    for item in lst:
+        stack.append(item)
+    result = []
+    while stack:
+        result.append(stack.pop())
+    return result`,
+  s1:"stack=[] — for item in lst: stack.append(item)  (push all)",
+  s2:"result=[] — while stack: result.append(stack.pop())  (pop all)",
+  ret:"return result"},
+
+"a-push":{type:"a",name:"push(s, e)",
+  code:`def push(s, e):
+    s.append(e)
+    return s`,
+  s1:"(stack is a plain list)",
+  s2:"s.append(e)",
+  ret:"return s"},
+
+"a-poptop":{type:"a",name:"pop_top(s)",
+  code:`def pop_top(s):
+    return s.pop()`,
+  s1:"(removes AND returns top element)",
+  s2:"return s.pop()"},
+
+"a-top":{type:"a",name:"top(s)",
+  code:`def top(s):
+    return s[-1]`,
+  s1:"(peek only — no removal)",
+  s2:"return s[-1]"},
+
+"a-isempty":{type:"a",name:"is_empty(s)",
+  code:`def is_empty(s):
+    return len(s) == 0`,
+  s2:"return len(s)==0"},
+
+// ── SLL ANSWERS ───────────────────────────────
+"a-sumsll":{type:"a",name:"sum_sll(llist)",
+  code:`def sum_sll(llist):
+    current = llist['head']
+    total = 0
+    while current is not None:
+        total += current
+        current = llist[current]
+    return total`,
+  s1:"current=llist['head'] — total=0",
+  s2:"while current is not None: total+=current — current=llist[current]",
+  ret:"return total"},
+
+"a-addfront":{type:"a",name:"add_front(llist, node)",
+  code:`def add_front(llist, node):
+    llist[node] = llist['head']
+    llist['head'] = node
+    return llist`,
+  s1:"(inserts at head — LIFO)",
+  s2:"llist[node]=llist['head'] → llist['head']=node",
+  ret:"return llist"},
+
+"a-traverse":{type:"a",name:"traverse(llist)",
+  code:`def traverse(llist):
+    current = llist['head']
+    while current is not None:
+        print(current)
+        current = llist[current]`,
+  s1:"current=llist['head']",
+  s2:"while current is not None: print(current) — current=llist[current]"},
+
+// ── NESTED ANSWERS ────────────────────────────
+"a-summaxes":{type:"a",name:"summaxes(a)",
+  code:`def summaxes(a):
+    total_sum = 0
+    for sub in a:
+        max_val = sub[0]
+        for v in sub:
+            if v > max_val:
+                max_val = v
+        total_sum += max_val
+    return total_sum`,
+  s1:"total_sum=0",
+  s2:"for sublist: max=sub[0] → for v: if v>max: max=v → total_sum+=max",
+  ret:"return total_sum"},
+
+"a-summins":{type:"a",name:"summins(a)",
+  code:`def summins(a):
+    total_sum = 0
+    for sub in a:
+        min_val = sub[0]
+        for v in sub:
+            if v < min_val:
+                min_val = v
+        total_sum += min_val
+    return total_sum`,
+  s1:"total_sum=0",
+  s2:"for sublist: min=sub[0] → for v: if v<min: min=v → total_sum+=min",
+  ret:"return total_sum"},
+
+"a-globalmin":{type:"a",name:"global_min(xlist)",
+  code:`def global_min(xlist):
+    smallest = xlist[0][0]
+    for sub in xlist:
+        for v in sub:
+            if v < smallest:
+                smallest = v
+    return smallest`,
+  s1:"smallest=xlist[0][0]",
+  s2:"for sublist: for v: if v<smallest: smallest=v",
+  ret:"return smallest"},
+
+"a-countall":{type:"a",name:"count_all(xlist)",
+  code:`def count_all(xlist):
+    count = 0
+    for sub in xlist:
+        for v in sub:
+            count += 1
+    return count`,
+  s1:"count=0",
+  s2:"for sublist: for v: count+=1",
+  ret:"return count"},
+
+"a-flatuniqeven":{type:"a",name:"flatten_unique_even(xlist)",
+  code:`def flatten_unique_even(xlist):
+    result = []
+    for sub in xlist:
+        for v in sub:
+            if v % 2 == 0:
+                found = False
+                for existing in result:
+                    if existing == v:
+                        found = True
+                if found == False:
+                    result.append(v)
+    return result`,
+  s1:"result=[] — double loop",
+  s2:"if v%2==0: found=False → for existing in result: if ==v: found=True → if found==False: result.append(v)",
+  ret:"return result"},
+
+"a-flateven":{type:"a",name:"flatten_even(nested_list)",
+  code:`def flatten_even(nested_list):
+    result = []
+    for sub in nested_list:
+        for v in sub:
+            if v % 2 == 0:
+                result.append(v)
+    return result`,
+  s1:"result=[] — double loop",
+  s2:"if v%2==0: result.append(v)",
+  ret:"return result"},
+
+"a-flatuniq":{type:"a",name:"flatten_unique(xlist)",
+  code:`def flatten_unique(xlist):
+    result = []
+    for sub in xlist:
+        for v in sub:
+            found = False
+            for existing in result:
+                if existing == v:
+                    found = True
+            if found == False:
+                result.append(v)
+    return result`,
+  s1:"result=[] — double loop",
+  s2:"found=False → for existing: if ==v: found=True → if found==False: append",
+  ret:"return result"},
+
+"a-dsevenmax":{type:"a",name:"ds_evenmax(xlist)",
+  code:`def ds_evenmax(xlist):
+    result = []
+    for inner in xlist:
+        if len(inner) % 2 == 0:
+            max_val = inner[0]
+            for v in inner:
+                if v > max_val:
+                    max_val = v
+            result = result + [max_val]
+    return result`,
+  s1:"result=[]",
+  s2:"for inner: if len(inner)%2==0: find max → result=result+[max_val]",
+  ret:"return result"},
+
+"a-dsminlength":{type:"a",name:"ds_minlength(xlist)",
+  code:`def ds_minlength(xlist):
+    result = []
+    for inner in xlist:
+        if len(inner) > 2:
+            min_val = inner[0]
+            for v in inner:
+                if v < min_val:
+                    min_val = v
+            result = result + [min_val]
+    return result`,
+  s1:"result=[]",
+  s2:"for inner: if len(inner)>2: find min → result=result+[min_val]",
+  ret:"return result"},
+
+"a-uniqueds":{type:"a",name:"unique_ds(xlist)",
+  code:`def unique_ds(xlist):
+    result = []
+    for sub in xlist:
+        inner = []
+        for v in sub:
+            found = False
+            for existing in inner:
+                if existing == v:
+                    found = True
+            if found == False:
+                inner.append(v)
+        result.append(inner)
+    return result`,
+  s1:"result=[] — for sublist: inner=[]",
+  s2:"for v: found=False → inner loop check → if found==False: inner.append(v) → result.append(inner)",
+  ret:"return result"},
+
+"a-evends":{type:"a",name:"even_ds(xlist)",
+  code:`def even_ds(xlist):
+    result = []
+    for sub in xlist:
+        inner = []
+        for v in sub:
+            if v % 2 == 0:
+                inner.append(v)
+        result.append(inner)
+    return result`,
+  s1:"result=[] — for sublist: inner=[]",
+  s2:"for v: if v%2==0: inner.append(v) → result.append(inner)",
+  ret:"return result"},
+
+"a-onlyoddds":{type:"a",name:"onlyodd_ds(xlist)",
+  code:`def onlyodd_ds(xlist):
+    result = []
+    for sub in xlist:
+        inner = []
+        for v in sub:
+            if v % 2 != 0:
+                inner.append(v)
+        result.append(inner)
+    return result`,
+  s1:"result=[] — for sublist: inner=[]",
+  s2:"for v: if v%2!=0: inner.append(v) → result.append(inner)",
+  ret:"return result"},
+
+"a-dsmaxeven":{type:"a",name:"ds_max_even(xlist)",
+  code:`def ds_max_even(xlist):
+    result = []
+    for sub in xlist:
+        max_even = None
+        for v in sub:
+            if v % 2 == 0:
+                if max_even is None or v > max_even:
+                    max_even = v
+        result.append(max_even)
+    return result`,
+  s1:"result=[] — per sublist: max_even=None",
+  s2:"if v%2==0 and (max_even is None or v>max_even): max_even=v → result.append(max_even)",
+  ret:"return result"},
+
+"a-dsmin":{type:"a",name:"ds_min(xlist)",
+  code:`def ds_min(xlist):
+    result = []
+    for sub in xlist:
+        smallest = sub[0]
+        for v in sub:
+            if v < smallest:
+                smallest = v
+        result.append(smallest)
+    return result`,
+  s1:"result=[] — for sublist: smallest=sub[0]",
+  s2:"for v: if v<smallest: smallest=v → result.append(smallest)",
+  ret:"return result"},
+
+"a-dsmax":{type:"a",name:"ds_max(xlist)",
+  code:`def ds_max(xlist):
+    result = []
+    for sub in xlist:
+        biggest = sub[0]
+        for v in sub:
+            if v > biggest:
+                biggest = v
+        result.append(biggest)
+    return result`,
+  s1:"result=[] — for sublist: biggest=sub[0]",
+  s2:"for v: if v>biggest: biggest=v → result.append(biggest)",
+  ret:"return result"},
+
+"a-dsavg":{type:"a",name:"ds_avg(xlist)",
+  code:`def ds_avg(xlist):
+    result = []
+    for sub in xlist:
+        total = 0
+        count = 0
+        for v in sub:
+            total += v
+            count += 1
+        result.append(total / count)
+    return result`,
+  s1:"result=[] — per sublist: total=0, count=0",
+  s2:"for v: total+=v, count+=1 → result.append(total/count)",
+  ret:"return result"},
+
+"a-dssum":{type:"a",name:"ds_sum(xlist)",
+  code:`def ds_sum(xlist):
+    result = []
+    for sub in xlist:
+        total = 0
+        for v in sub:
+            total += v
+        result.append(total)
+    return result`,
+  s1:"result=[] — per sublist: total=0",
+  s2:"for v: total+=v → result.append(total)",
+  ret:"return result"},
+
+"a-countevends":{type:"a",name:"count_even_ds(xlist)",
+  code:`def count_even_ds(xlist):
+    result = []
+    for sub in xlist:
+        count = 0
+        for v in sub:
+            if v % 2 == 0:
+                count += 1
+        result.append(count)
+    return result`,
+  s1:"result=[] — per sublist: count=0",
+  s2:"for v: if v%2==0: count+=1 → result.append(count)",
+  ret:"return result"},
+
+"a-countneg":{type:"a",name:"countnegativexlist(xlist)",
+  code:`def countnegativexlist(xlist):
+    result = []
+    for sub in xlist:
+        count = 0
+        for v in sub:
+            if v < 0:
+                count += 1
+        result.append(count)
+    return result`,
+  s1:"result=[] — per sublist: count=0",
+  s2:"for v: if v<0: count+=1 → result.append(count)",
+  ret:"return result"},
+
+"a-dscountuniqeven":{type:"a",name:"ds_count_unique_even(xlist)",
+  code:`def ds_count_unique_even(xlist):
+    result = []
+    for sub in xlist:
+        inner = []
+        count = 0
+        for v in sub:
+            if v % 2 == 0:
+                found = False
+                for existing in inner:
+                    if existing == v:
+                        found = True
+                if found == False:
+                    inner.append(v)
+                    count += 1
+        result.append(count)
+    return result`,
+  s1:"result=[] — per sublist: inner=[], count=0",
+  s2:"if v%2==0 AND not in inner: inner.append(v), count+=1 → result.append(count)",
+  ret:"return result"},
+
+// ── STRING ANSWERS ────────────────────────────
+"a-ispangram":{type:"a",name:"is_pangram(s)",
+  code:`def is_pangram(s):
+    seen = [0] * 26
+    for ch in s:
+        if 'a' <= ch <= 'z':
+            seen[ord(ch) - ord('a')] = 1
+        elif 'A' <= ch <= 'Z':
+            seen[ord(ch) - ord('A')] = 1
+    for val in seen:
+        if val == 0:
+            return False
+    return True`,
+  s1:"seen=[0]*26",
+  s2:"for ch: if 'a'<=ch<='z': seen[ord(ch)-ord('a')]=1 (same for uppercase) → for val in seen: if val==0: return False",
+  ret:"return True"},
+
+"a-ispalindrome":{type:"a",name:"is_palindrome(s)",
+  code:`def is_palindrome(s):
+    i = 0
+    j = len(s) - 1
+    while i < j:
+        if s[i] != s[j]:
+            return False
+        i += 1
+        j -= 1
+    return True`,
+  s1:"i=0 — j=len(s)-1",
+  s2:"while i<j: if s[i]!=s[j]: return False — i+=1, j-=1",
+  ret:"return True"},
+
+"a-isrotation":{type:"a",name:"is_rotation(s1, s2)",
+  code:`def is_rotation(s1, s2):
+    if len(s1) != len(s2):
+        return False
+    doubled = s1 + s1
+    n = len(s2)
+    for i in range(len(doubled) - n + 1):
+        if doubled[i:i+n] == s2:
+            return True
+    return False`,
+  s1:"if len(s1)!=len(s2): return False — doubled=s1+s1",
+  s2:"n=len(s2) → for i in range(len(doubled)-n+1): if doubled[i:i+n]==s2: return True",
+  ret:"return False"},
+
+"a-countvowels":{type:"a",name:"count_vowels(s)",
+  code:`def count_vowels(s):
+    count = 0
+    for ch in s:
+        if ch == 'a' or ch == 'e' or ch == 'i' or ch == 'o' or ch == 'u':
+            count += 1
+        elif ch == 'A' or ch == 'E' or ch == 'I' or ch == 'O' or ch == 'U':
+            count += 1
+    return count`,
+  s1:"count=0",
+  s2:"for ch: if ch=='a' or ch=='e' or ch=='i' or ch=='o' or ch=='u' (also uppercase): count+=1",
+  ret:"return count"},
+
+"a-countcons":{type:"a",name:"count_consonants(text)",
+  code:`def count_consonants(text):
+    vowels = 'aeiou'
+    count = 0
+    text = text.lower()
+    for ch in text:
+        if 'a' <= ch <= 'z' and ch not in vowels:
+            count += 1
+    return count`,
+  s1:"vowels='aeiou' — count=0 — text=text.lower()",
+  s2:"for ch: if 'a'<=ch<='z' and ch not in vowels: count+=1",
+  ret:"return count"},
+
+"a-countdigits":{type:"a",name:"count_digits(text)",
+  code:`def count_digits(text):
+    count = 0
+    for ch in text:
+        if '0' <= ch <= '9':
+            count += 1
+    return count`,
+  s1:"count=0",
+  s2:"for ch: if '0'<=ch<='9': count+=1",
+  ret:"return count"},
+
+"a-revstring":{type:"a",name:"reverse_string(s)",
+  code:`def reverse_string(s):
+    result = ''
+    i = len(s) - 1
+    while i >= 0:
+        result += s[i]
+        i -= 1
+    return result`,
+  s1:"result='' — i=len(s)-1",
+  s2:"while i>=0: result+=s[i] — i-=1",
+  ret:"return result"},
+
+"a-altcase":{type:"a",name:"alternate_case(s)",
+  code:`def alternate_case(s):
+    result = ''
+    upper = True
+    for ch in s:
+        if 'a' <= ch <= 'z' and upper:
+            result += chr(ord(ch) - 32)
+        elif 'A' <= ch <= 'Z' and not upper:
+            result += chr(ord(ch) + 32)
+        else:
+            result += ch
+        if 'a' <= ch <= 'z' or 'A' <= ch <= 'Z':
+            upper = not upper
+    return result`,
+  s1:"result='' — upper=True",
+  s2:"for ch: if lower&upper: chr(ord(ch)-32) else ch → upper=not upper (skip non-letters with else)",
+  ret:"return result"},
+
+"a-digitsum":{type:"a",name:"digit_sum(n)",
+  code:`def digit_sum(n):
+    if n == 0:
+        return 0
+    return n % 10 + digit_sum(n // 10)`,
+  s1:"BASE CASE: if n==0: return 0",
+  s2:"RECURSIVE: return n%10 + digit_sum(n//10)",
+  ret:"(gets last digit + recurse on rest)"},
+
+"a-digitcount":{type:"a",name:"digit_count(n)",
+  code:`def digit_count(n):
+    if n < 10:
+        return 1
+    return 1 + digit_count(n // 10)`,
+  s1:"BASE CASE: if n<10: return 1",
+  s2:"RECURSIVE: return 1 + digit_count(n//10)",
+  ret:"(count 1 + recurse on n without last digit)"},
+
+// ── DICT ANSWERS ──────────────────────────────
+"a-querycatalog":{type:"a",name:"query_catalog(catalog, artist, min_dur)",
+  code:`def query_catalog(catalog, artist, min_dur):
+    by_artist = []
+    long_songs = []
+    for title, info in catalog.items():
+        art = info[0]
+        dur = info[1]
+        if art == artist:
+            by_artist += [title]
+        if dur > min_dur:
+            long_songs += [title]
+    return by_artist, long_songs`,
+  s1:"by_artist=[] — long_songs=[]",
+  s2:"for title,info: art=info[0], dur=info[1] → if art==artist: by_artist+=[title] → if dur>min_dur: long_songs+=[title]",
+  ret:"return by_artist, long_songs"},
+
+"a-querygrades":{type:"a",name:"query_grades(grades, subject, min_score)",
+  code:`def query_grades(grades, subject, min_score):
+    by_subject = []
+    high_scorers = []
+    for name, info in grades.items():
+        subj = info[0]
+        score = info[1]
+        if subj == subject:
+            by_subject += [name]
+        if score > min_score:
+            high_scorers += [name]
+    return by_subject, high_scorers`,
+  s1:"by_subject=[] — high_scorers=[]",
+  s2:"for name,info: subj=info[0], score=info[1] → if subj==subject: by_subject+=[name] → if score>min_score: high_scorers+=[name]",
+  ret:"return by_subject, high_scorers"},
+
+"a-bytype":{type:"a",name:"by_type(pb, contact_type)",
+  code:`def by_type(pb, contact_type):
+    result = []
+    for name in pb:
+        if pb[name][1] == contact_type:
+            result += [name]
+    return result`,
+  s1:"result=[]",
+  s2:"for name in pb: if pb[name][1]==contact_type: result+=[name]",
+  ret:"return result"},
+
+"a-countletters":{type:"a",name:"count_letters(text)",
+  code:`def count_letters(text):
+    d = {}
+    text = text.lower()
+    for x in text:
+        if x in d:
+            d[x] += 1
+        else:
+            d[x] = 1
+    return d`,
+  s1:"d={} — text=text.lower()",
+  s2:"for x in text: if x in d: d[x]+=1 — else: d[x]=1",
+  ret:"return d"},
+
+"a-wordlengths":{type:"a",name:"word_lengths(text)",
+  code:`def word_lengths(text):
+    d = {}
+    words = text.split()
+    for w in words:
+        d[w] = len(w)
+    return d`,
+  s1:"d={} — words=text.split()",
+  s2:"for w in words: d[w]=len(w)",
+  ret:"return d"},
+
+"a-invertgroup":{type:"a",name:"invert_and_group(d)",
+  code:`def invert_and_group(d):
+    inverse = {}
+    for k in d:
+        val = d[k]
+        if val not in inverse:
+            inverse[val] = [k]
+        else:
+            inverse[val].append(k)
+    return inverse`,
+  s1:"inverse={}",
+  s2:"for k: val=d[k] → if val not in inverse: inverse[val]=[k] — else: inverse[val].append(k)",
+  ret:"return inverse"},
+
+// ── FLAT LIST ANSWERS ─────────────────────────
+"a-sortasc":{type:"a",name:"insertionSort(a)",
+  code:`def insertionSort(a):
+    for j in range(1, len(a)):
+        key = a[j]
+        i = j
+        while i > 0 and a[i-1] > key:
+            a[i] = a[i-1]
+            i -= 1
+        a[i] = key
+    return a`,
+  s1:"for j in range(1, len(a)): key=a[j] — i=j",
+  s2:"while i>0 and a[i-1]>key: a[i]=a[i-1], i-=1 → a[i]=key",
+  ret:"return a"},
+
+"a-sortdesc":{type:"a",name:"insertionSort_desc(a)",
+  code:`def insertionSort_desc(a):
+    for j in range(1, len(a)):
+        key = a[j]
+        i = j
+        while i > 0 and a[i-1] < key:
+            a[i] = a[i-1]
+            i -= 1
+        a[i] = key
+    return a`,
+  s1:"for j in range(1, len(a)): key=a[j] — i=j",
+  s2:"while i>0 and a[i-1]<key: a[i]=a[i-1], i-=1 → a[i]=key  (< flips order)",
+  ret:"return a"},
+
+"a-separate":{type:"a",name:"separate_even_odd(lst)",
+  code:`def separate_even_odd(lst):
+    even = []
+    odd = []
+    for v in lst:
+        if v % 2 == 0:
+            even.append(v)
+        else:
+            odd.append(v)
+    return [even, odd]`,
+  s1:"even=[] — odd=[]",
+  s2:"for v: if v%2==0: even.append(v) — else: odd.append(v)",
+  ret:"return [even, odd]"},
+
+"a-scalar":{type:"a",name:"scalar_product(v1, v2)",
+  code:`def scalar_product(v1, v2):
+    result = []
+    if len(v1) != len(v2):
+        return 'lengths not equal'
+    for i in range(len(v1)):
+        result.insert(i, v1[i] * v2[i])
+    return result`,
+  s1:"result=[] — if len(v1)!=len(v2): return 'lengths not equal'",
+  s2:"for i in range(len(v1)): result.insert(i, v1[i]*v2[i])",
+  ret:"return result"},
+
+"a-uniqueeven":{type:"a",name:"unique_even(lst)",
+  code:`def unique_even(lst):
+    result = []
+    for v in lst:
+        if v % 2 == 0:
+            found = False
+            for existing in result:
+                if existing == v:
+                    found = True
+            if found == False:
+                result.append(v)
+    return result`,
+  s1:"result=[]",
+  s2:"for v: if v%2==0: found=False → for existing: if ==v: found=True → if found==False: append",
+  ret:"return result"},
+
+"a-onlyeven":{type:"a",name:"onlyeven(xlist)",
+  code:`def onlyeven(xlist):
+    result = []
+    for v in xlist:
+        if v % 2 == 0:
+            result.append(v)
+    return result`,
+  s1:"result=[]",
+  s2:"for v: if v%2==0: result.append(v)",
+  ret:"return result"},
+
+"a-onlyodd":{type:"a",name:"onlyodd(xlist)",
+  code:`def onlyodd(xlist):
+    result = []
+    for v in xlist:
+        if v % 2 != 0:
+            result.append(v)
+    return result`,
+  s1:"result=[]",
+  s2:"for v: if v%2!=0: result.append(v)",
+  ret:"return result"},
+
+"a-greaterthan":{type:"a",name:"greater_than(lst, n)",
+  code:`def greater_than(lst, n):
+    result = []
+    for v in lst:
+        if v > n:
+            result.append(v)
+    return result`,
+  s1:"result=[]",
+  s2:"for v: if v>n: result.append(v)",
+  ret:"return result"},
+
+"a-smallerthan":{type:"a",name:"smaller_than(lst, n)",
+  code:`def smaller_than(lst, n):
+    result = []
+    for v in lst:
+        if v < n:
+            result.append(v)
+    return result`,
+  s1:"result=[]",
+  s2:"for v: if v<n: result.append(v)",
+  ret:"return result"},
+
+"a-uniquelist":{type:"a",name:"unique_list(lst)",
+  code:`def unique_list(lst):
+    result = []
+    for item in lst:
+        found = False
+        for existing in result:
+            if existing == item:
+                found = True
+        if found == False:
+            result.append(item)
+    return result`,
+  s1:"result=[]",
+  s2:"for item: found=False → for existing in result: if ==item: found=True → if found==False: append",
+  ret:"return result"},
+
+"a-counteven":{type:"a",name:"count_even(lst)",
+  code:`def count_even(lst):
+    count = 0
+    for v in lst:
+        if v % 2 == 0:
+            count += 1
+    return count`,
+  s1:"count=0",
+  s2:"for v: if v%2==0: count+=1",
+  ret:"return count"},
+
+"a-countodd":{type:"a",name:"count_odd(lst)",
+  code:`def count_odd(lst):
+    count = 0
+    for v in lst:
+        if v % 2 != 0:
+            count += 1
+    return count`,
+  s1:"count=0",
+  s2:"for v: if v%2!=0: count+=1",
+  ret:"return count"},
+
+"a-countgreater":{type:"a",name:"count_greater(lst, n)",
+  code:`def count_greater(lst, n):
+    count = 0
+    for v in lst:
+        if v > n:
+            count += 1
+    return count`,
+  s1:"count=0",
+  s2:"for v: if v>n: count+=1",
+  ret:"return count"},
+
+"a-countvalue":{type:"a",name:"count_value(lst, target)",
+  code:`def count_value(lst, target):
+    count = 0
+    for item in lst:
+        if item == target:
+            count += 1
+    return count`,
+  s1:"count=0",
+  s2:"for item: if item==target: count+=1",
+  ret:"return count"},
+
+"a-percenteven":{type:"a",name:"percent_even(lst)",
+  code:`def percent_even(lst):
+    count = 0
+    for v in lst:
+        if v % 2 == 0:
+            count += 1
+    return count / len(lst) * 100`,
+  s1:"count=0 — for v: if v%2==0: count+=1",
+  s2:"return count / len(lst) * 100",
+  ret:"return percentage"},
+
+"a-mymin":{type:"a",name:"my_min(lst)",
+  code:`def my_min(lst):
+    best = lst[0]
+    for v in lst:
+        if v < best:
+            best = v
+    return best`,
+  s1:"best=lst[0]",
+  s2:"for v: if v<best: best=v",
+  ret:"return best"},
+
+"a-mymax":{type:"a",name:"my_max(lst)",
+  code:`def my_max(lst):
+    best = lst[0]
+    for v in lst:
+        if v > best:
+            best = v
+    return best`,
+  s1:"best=lst[0]",
+  s2:"for v: if v>best: best=v",
+  ret:"return best"},
+
+"a-mysum":{type:"a",name:"my_sum(xlist)",
+  code:`def my_sum(xlist):
+    total = 0
+    for v in xlist:
+        total += v
+    return total`,
+  s1:"total=0",
+  s2:"for v: total+=v",
+  ret:"return total"},
+
+"a-myavg":{type:"a",name:"average(lst) / my_average",
+  code:`def average(lst):
+    total = 0
+    count = 0
+    for v in lst:
+        total += v
+        count += 1
+    return total / count`,
+  s1:"total=0 — count=0",
+  s2:"for v: total+=v, count+=1",
+  ret:"return total/count  (or total/len(lst))"},
+};
+
+// ═══════════════════════════════════════════════════════
+//  RENDERER
+// ═══════════════════════════════════════════════════════
+let history = [];
+
+function render(id) {
+  const node = TREE[id];
+  if (!node) {
+    document.getElementById('flow-out').innerHTML='<p style="color:#ff7b72">Node not found: '+id+'</p>';
+    return;
+  }
+
+  const depth = Math.min(history.length * 11, 92);
+  document.getElementById('prog').style.width = Math.max(4, depth) + '%';
+
+  let html = '';
+
+  if (history.length > 0) {
+    html += `<span class="back-btn" onclick="goBack()">← Back</span>`;
+  }
+
+  if (node.type === 'q') {
+    html += `
+      <div class="q-node">
+        <div class="qlabel">${node.label || ''}</div>
+        <div class="qtext">${node.text}</div>
+        <div class="branch">
+          <div class="yes-btn" onclick="goto('${node.yes}','${id}')">✅ YES</div>
+          <div class="no-btn"  onclick="goto('${node.no}','${id}')">❌ NO</div>
+        </div>
+      </div>`;
+  } else {
+    html += `<div class="ans-node">
+      <div class="fn-sig">✅ ${node.name}</div>`;
+    if (node.code) {
+      html += `<pre class="code-block">${escHtml(node.code)}</pre>`;
+    }
+    if (node.s1) html += `<div class="w-row"><div class="w-label">① Setup</div><div class="w-text">${node.s1}</div></div>`;
+    if (node.s2) html += `<div class="w-row"><div class="w-label">② Key line</div><div class="w-text">${node.s2}</div></div>`;
+    if (node.ret) html += `<div class="w-row"><div class="w-label">③ Return</div><div class="w-text">${node.ret}</div></div>`;
+    html += `</div>
+    <button class="restart-btn" onclick="restart()">🔁 New function</button>`;
+  }
+
+  document.getElementById('flow-out').innerHTML = html;
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function goto(id, fromId) {
+  history.push(fromId);
+  render(id);
+}
+
+function goBack() {
+  const prev = history.pop();
+  if (prev) render(prev);
+  else restart();
+}
+
+function restart() {
+  history = [];
+  document.getElementById('prog').style.width = '4%';
+  render('q1');
+}
+
+function showTab(name, el) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  el.classList.add('active');
+}
+
+render('q1');
+</script>
+</body>
+</html>
